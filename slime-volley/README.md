@@ -115,27 +115,3 @@ The agents use a Deep Q-Learning approach:
 4. **Exploration vs Exploitation**: Epsilon-greedy strategy balances exploration and learned behavior
 5. **Continuous Learning**: Agents improve through self-play over many games
 
-## Key Learning Aspects
-
-- **Temporal Difference Learning**: Agents learn to estimate future rewards
-- **Experience Replay**: Past experiences are reused for more stable learning
-- **Self-Play**: Both agents improve by playing against each other
-- **Exploration Decay**: Gradual shift from random exploration to learned strategy
-
-## Future Enhancements
-
-- Save/load trained models
-- Tournament mode with multiple agents
-- Different difficulty levels
-- Enhanced graphics and animations
-- Network architecture experimentation
-- Hyperparameter optimization
-
-## Technical Details
-
-- **Game Engine**: Custom physics engine with realistic collision detection
-- **AI Framework**: PyTorch-based deep reinforcement learning
-- **Graphics**: Pygame for real-time rendering
-- **Training Method**: Deep Q-Networks with experience replay
-
-This project demonstrates the application of reinforcement learning to game AI, showcasing how agents can learn complex strategies through trial and error in a competitive environment.
