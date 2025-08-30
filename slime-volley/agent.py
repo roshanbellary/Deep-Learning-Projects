@@ -5,37 +5,49 @@ import torch
 import math
 from collections import deque
 
-from game import GameState
-MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
+MAX_MEMORY = 1_000_000
+BATCH_SIZE = 1_000
 LR = 0.001
 
 class Agent:
     def __init__(self, type):
         self.epsilon = 0.5
         self.gamma = 0.9
+        self.type = type
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = QNet()
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
         self.n_games = 0
 
+    def save_model(self):
+        self.model.save(f"{self.type}.pth")
+    
+    def load_model(self):
+        self.model.load_state_dict(torch.load(f"./model/{self.type}.pth"))
+        self.model.eval()
+
+    def _get_best_action(self, state):
+        final_move = [0, 0, 0, 0]
+        state0 = torch.tensor(state, dtype=torch.float)
+        prediction = self.model(state0)
+
+        move = torch.argmax(prediction).item()
+
+        final_move[move] = 1
+        return final_move
+    
     def get_action(self, state): 
         # state constists of 10 dimensions
         # ball position and ball velocity
         # player position and player vertical velocity
         # opponent position and opponent vertical velocity
         #action consists of 4 possibilities: move left, right, jump, stay
-        self.epsilon =  0.2 * math.exp(math.log(0.5)/100 * self.n_games)
+        self.epsilon =  0.5 * math.exp(math.log(0.5)/10000 * self.n_games)
 
         final_move = [0, 0, 0, 0]
 
         if (random.random() > self.epsilon):
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-
-            move = torch.argmax(prediction).item()
-
-            final_move[move] = 1
+            return self._get_best_action(state)
         else:
             move = random.randint(0, 3)
             final_move[move] = 1

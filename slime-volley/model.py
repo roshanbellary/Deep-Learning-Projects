@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.optim as otpim
+import torch.optim as optim
 import torch.nn.functional as F
 import os 
 
@@ -22,12 +22,20 @@ class QNet(nn.Module):
         logits = self.stack(x)
         return logits 
     
+    def save(self, file_name='model.pth'):
+        model_folder_path = './model'
+        if not os.path.exists(model_folder_path):
+            os.makedirs(model_folder_path)
+        
+        file_name = os.path.join(model_folder_path, file_name)
+        torch.save(self.state_dict(), file_name)
+    
 class QTrainer:
     def __init__(self, model, lr, gamma):
         self.lr = lr
         self.gamma = gamma 
         self.model = model 
-        self.optimizer = otpim.Adam(model.parameters(), lr=self.lr)
+        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
 
@@ -52,6 +60,7 @@ class QTrainer:
             Q_new = reward[idx]
             if not done[idx]:
                 Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
+            target[idx][torch.argmax(action[idx]).item()] = Q_new
 
         self.optimizer.zero_grad()
         loss = self.criterion(target, pred)

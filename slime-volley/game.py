@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 import math
+from agent import *
 
 class GameState:
     """Contains all game state data"""
@@ -148,6 +149,9 @@ class SlimeVolleyball:
     
     def update_ball_physics(self):
         """Update ball physics including movement, gravity, and collisions"""
+        player_reward = 0
+        opponent_reward = 0
+        done = False
         # Update ball position
         self.state.ball_x += self.state.ball_vx
         self.state.ball_y += self.state.ball_vy
@@ -172,13 +176,24 @@ class SlimeVolleyball:
                 self.state.opponent_score += 1
                 self.reset_paddle_positions()
                 self.reset_ball("opponent")
-                return (0, 1, True)
+                player_reward -= 100
+                opponent_reward += 100
+                done = True
+                return (player_reward, opponent_reward, done)
             else:
                 self.state.player_score += 1
                 self.reset_paddle_positions()
                 self.reset_ball("player")
-                return (1, 0, True)
+                player_reward += 100
+                opponent_reward -= 100
+                done = True 
+                return (player_reward, opponent_reward, done)
         
+        if self.state.ball_x < self.state.NET_X:
+            player_reward -= 1
+        else:
+            opponent_reward -= 1
+
         # Ball collision with net
         if (self.state.NET_X - self.state.BALL_RADIUS <= self.state.ball_x <= self.state.NET_X + self.state.NET_WIDTH + self.state.BALL_RADIUS and
             self.state.ball_y >= self.state.GROUND_Y - self.state.NET_HEIGHT - self.state.BALL_RADIUS):
@@ -200,7 +215,8 @@ class SlimeVolleyball:
                 self.state.ball_y = paddle_center_y + normalized_y * collision_distance
             
             self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(paddle_center_x, paddle_center_y, self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy, 0, self.state.player_vy)
-            return (0.5, 0, False)
+            
+            player_reward += 2
         # Ball collision with opponent paddle (semicircle)
         paddle_center_x = self.state.opponent_x + self.state.PADDLE_RADIUS
         paddle_center_y = self.state.opponent_y + self.state.PADDLE_RADIUS
@@ -217,8 +233,9 @@ class SlimeVolleyball:
                 self.state.ball_y = paddle_center_y + normalized_y * collision_distance
             
             self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(paddle_center_x, paddle_center_y, self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy, 0, self.state.opponent_vy)
-            return (0, 0.5, False)
-        return (0, 0, False)
+            opponent_reward += 2
+
+        return (player_reward, opponent_reward, done)
     def handle_input(self):
         """Handle pygame key events and call appropriate movement functions"""
         keys = pygame.key.get_pressed()
@@ -382,23 +399,10 @@ class SlimeVolleyball:
         opponent_action = opponent_action.index(1)
         self._play_player_action(player_action)
         self._play_opponent_action(opponent_action)
-        player_score, opponent_score, done = self.update()
-        player_reward = 0
-        opponent_reward = 0
-        if player_score == 1:
-            opponent_reward = -100
-            player_reward = 100
-        elif opponent_score == 1:
-            opponent_reward = 100
-            player_reward = -100
+        player_reward, opponent_reward, done = self.update()
         
-        if player_score == 0.5:
-            player_reward = 10
-        elif opponent_score == 0.5:
-            opponent_reward = 10
-        
-        self.render()
-        self.clock.tick(60)
+        # self.render()
+        # self.clock.tick(60)
         return player_reward, opponent_reward, done
 
     def get_state(self):
@@ -427,6 +431,35 @@ class SlimeVolleyball:
         #     "opponent_vy" : self.state.opponent_vy
         # }
 
+    def play_model(self, type):
+        self.agent = Agent(type)
+        self.agent.load_model()
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    self.running = False 
+                elif event.type == KEYDOWN:
+                        if event.key == K_ESCAPE:
+                            self.running = False 
+            self.handle_input()
+            
+            action = self.agent._get_best_action(self.get_state()).index(1)
+            if type == "opponent":
+                print("Opponent AI Action:", action)
+                self._play_opponent_action(action)
+            else:
+                print("Player AI Action:", action)
+                self._play_player_action(action)
+
+            self.update()
+            self.render()
+
+            self.clock.tick(60)
+        pygame.quit()
+        sys.exit()
+            
+
+
     def run(self, manual_control=True):
         """Main game loop"""
         while self.running:
@@ -438,11 +471,8 @@ class SlimeVolleyball:
                     if event.key == K_ESCAPE:
                         self.running = False
             
-            # Handle input
-            if manual_control:
-                self.handle_input()
-            else:
-                self.handle_input_ai()
+            self.handle_input()
+
             # Update game logic
             self.update()
             
@@ -457,5 +487,12 @@ class SlimeVolleyball:
 
 if __name__ == "__main__":
     game = SlimeVolleyball()
-    game.run()
+    if len(sys.argv) > 1:
+        type = sys.argv[1]
+        if type.find("player") > 0:
+            game.play_model("player")
+        else:
+            game.play_model("opponent")
+    else:
+        game.run()
 
