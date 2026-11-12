@@ -33,7 +33,7 @@ class Agent:
 
         move = torch.argmax(prediction).item()
 
-        final_move[move] = 1
+        final_move[int(move)] = 1
         return final_move
     
     def get_action(self, state): 

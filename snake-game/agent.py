@@ -20,12 +20,20 @@ class Agent:
         self.epsilon = 0 # controls randomness of choices
         self.gamma = 0.9 # discount rate on max calc of next states rewards
         self.memory = deque(maxlen=MAX_MEMORY) #deque for memoization 
-        self.model = Linear_QNet(11, 256, 256, 3) # 11 input state, 256 size hidden layer, 3 possible actions
+        self.model = Linear_QNet(18, 256, 256, 256, 3) # 18 input state, 256 size hidden layers, 3 possible actions
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma) # TODO
 
 
     def get_state(self, game):
         head = game.snake[0]
+        tail = game.snake[-1]
+        minx, maxx, miny, maxy  = (head.x, head.x, head.y, head.y)
+        snake_length = len(game.snake)
+        for point in game.snake:
+            minx = min(minx, point.x)
+            maxx = max(maxx, point.x)
+            miny = min(miny, point.y)
+            maxy = max(maxy, point.y)
 
         point_l = Point(head.x-20, head.y)
         point_r = Point(head.x+20, head.y)
@@ -64,7 +72,16 @@ class Agent:
             game.food.x < game.head.x, # food left
             game.food.x > game.head.x, # food right
             game.food.y < game.head.y, # food up
-            game.food.y > game.head.y # food down
+            game.food.y > game.head.y, # food down
+
+            head.x,  # snake head position x
+            head.y,  # snake head position y
+            minx < head.x, # min x position of the entire snake
+            maxx > head.x, # max x position of the entire snake
+            miny < head.y, # min y position of the entire snake
+            maxy > head.y, # max y position of the entire snake
+            snake_length # length of snake
+
         ]
 
         return np.array(state, dtype=int)
@@ -88,10 +105,10 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done) 
 
     def get_action(self, state):
-        self.epsilon = 80-self.n_games 
+        self.epsilon = 500-self.n_games 
         final_move = [0,0,0]
 
-        if random.randint(0, 200) < self.epsilon:
+        if random.randint(0, 500) < self.epsilon:
             move = random.randint(0, 2)
             final_move[move] = 1
         else:

@@ -1,498 +1,626 @@
-import pygame
-from pygame.locals import *
-import sys
+"""Simulation and rendering engine for two-agent Slime Volleyball.
+
+The simulation API is intentionally independent from pygame::
+
+    game = SlimeVolleyball()
+    states = game.reset()
+    result = game.step(Action.LEFT, Action.NOTHING)
+
+``result.states`` contains one observation per model and ``result.events``
+contains the events that occurred during that step. A round ending sets
+``result.done`` to ``True``. Reward shaping is handled by the caller.
+"""
+
+from dataclasses import dataclass
+from enum import Enum
 import math
-from agent import *
+from pathlib import Path
+import sys
+from typing import Dict, FrozenSet, List, Optional, Tuple, Union
+
+try:
+    import pygame
+except ImportError:  # The physics environment can run without the renderer.
+    pygame = None
+
+
+class Action(Enum):
+    """Action space exposed to each agent."""
+
+    LEFT = "left"
+    RIGHT = "right"
+    UP = "up"
+    NOTHING = "nothing"
+
+
+ActionState = Action
+GameAction = Action
+
+
+class Player(Enum):
+    PLAYER_ONE = "player_one"
+    PLAYER_TWO = "player_two"
+
+
+class GameEvent(Enum):
+    """Events emitted by one simulation step."""
+
+    PLAYER_ONE_HIT = "player_one_hit"
+    PLAYER_TWO_HIT = "player_two_hit"
+    BALL_CROSSED_TO_PLAYER_ONE_SIDE = "ball_crossed_to_player_one_side"
+    BALL_CROSSED_TO_PLAYER_TWO_SIDE = "ball_crossed_to_player_two_side"
+    PLAYER_ONE_WON_ROUND = "player_one_won_round"
+    PLAYER_TWO_WON_ROUND = "player_two_won_round"
+
+    # Backwards-compatible aliases for the original names.
+    PLAYER_HIT = PLAYER_ONE_HIT
+    OPPONENT_HIT = PLAYER_TWO_HIT
+    PLAYER_GAME_OVER = PLAYER_ONE_WON_ROUND
+    OPPONENT_GAME_OVER = PLAYER_TWO_WON_ROUND
+
+
+@dataclass(frozen=True)
+class StepResult:
+    """The complete result of one pair of agent actions."""
+
+    states: Dict[str, List[float]]
+    events: FrozenSet[GameEvent]
+    done: bool
+    winner: Optional[Player] = None
+
+    @property
+    def event_flags(self) -> Dict[GameEvent, bool]:
+        """Return every event as a boolean indicator for reward code."""
+
+        return {event: event in self.events for event in GameEvent}
+
+    def __iter__(self):
+        """Allow ``states, events, done = result`` unpacking."""
+
+        yield self.states
+        yield self.events
+        yield self.done
+
 
 class GameState:
-    """Contains all game state data"""
+    """Mutable physical state of the game."""
+
     def __init__(self):
-        # Screen dimensions
         self.SCREEN_WIDTH = 750
         self.SCREEN_HEIGHT = 370
         self.GROUND_Y = 300
-        # Game constants
-        self.PADDLE_RADIUS = 40
 
-        # Player and opponent positions
+        self.PADDLE_RADIUS = 40
+        self.BALL_RADIUS = 10
+        self.BALL_SPEED = 4
+        self.BALL_MAX_SPEED = 12
+        self.MOVEMENT_SPEED = 2
+        self.GRAVITY = 0.4
+        self.JUMP_FORCE = -6
+
+        self.NET_X = 375
+        self.NET_WIDTH = 5
+        self.NET_HEIGHT = 50
+
+        self.collision_coefficient = 1
+        self.collision_margin = 0
+
         self.player_x = 125
         self.player_y = self.GROUND_Y - self.PADDLE_RADIUS
         self.player_vy = 0
         self.opponent_x = 562.5
         self.opponent_y = self.GROUND_Y - self.PADDLE_RADIUS
         self.opponent_vy = 0
-        
-        # Ball position and velocity
+
         self.ball_x = 375
         self.ball_y = 100
         self.ball_vx = 0
         self.ball_vy = 0
-        
-        self.MOVEMENT_SPEED = 2
 
-        self.BALL_RADIUS = 10        
-        self.BALL_SPEED = 4
-        self.BALL_MAX_SPEED = 12
-        
-        self.GRAVITY = 0.4
-        self.JUMP_FORCE = -6  # Negative for upward movement
-        
-        self.collision_coefficient = 1
-        self.collision_margin = 0
-        # Scores
         self.player_score = 0
         self.opponent_score = 0
-        
-        # Game boundaries
-        self.NET_X = 375
-        self.NET_WIDTH = 5
-        self.NET_HEIGHT = 50
 
+ActionInput = Union[Action, str, int, List[int], Tuple[int, ...]]
 class SlimeVolleyball:
-    """Main game controller class"""
-    def __init__(self):
-        pygame.init()
-        self.state = GameState()
-        self.screen = pygame.display.set_mode((self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT))
-        pygame.display.set_caption("Slime Volleyball")
-        self.clock = pygame.time.Clock()
+    """Two-player Slime Volleyball environment.
+
+    ``render=False`` is the default for fast genetic-algorithm simulation.
+    Set ``render=True`` when using ``run()`` or ``render()`` for pygame.
+    """
+
+    def __init__(self, render: bool = False):
+        self.render_enabled = render
+        self.screen = None
+        self.clock = None
         self.running = True
-        
-        # Colors
+
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.BLUE = (0, 100, 255)
         self.RED = (255, 100, 100)
         self.GREEN = (100, 255, 100)
-        self.GRAY = (128, 128, 128)
-        
-        self.reset_ball()
-    
-    def reset_ball(self, winner="player"):
-        """Reset ball over the winning player's paddle with upward movement only"""
-        if winner == "player":
+
+        self.state = GameState()
+        self.last_result: Optional[StepResult] = None
+        self._last_ball_side = self._ball_side()
+        self.reset_ball(Player.PLAYER_ONE)
+
+        if self.render_enabled:
+            self._initialize_renderer()
+
+    def _initialize_renderer(self):
+        if pygame is None:
+            raise RuntimeError(
+                "pygame is required for rendering. Install it in the project's virtual environment."
+            )
+        pygame.init()
+        self.screen = pygame.display.set_mode(
+            (self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT)
+        )
+        pygame.display.set_caption("Slime Volleyball")
+        self.clock = pygame.time.Clock()
+
+    def initialize_game(self) -> Dict[str, List[float]]:
+        """Reset the environment and return observations for both models."""
+
+        return self.reset()
+
+    def reset(self) -> Dict[str, List[float]]:
+        """Start a new game and return one state for each player model."""
+
+        self.state = GameState()
+        self.running = True
+        self.last_result = None
+        self.reset_ball(Player.PLAYER_ONE)
+        return self.get_states()
+
+    def reset_game(self) -> Dict[str, List[float]]:
+        """Backward-compatible alias for :meth:`reset`."""
+
+        return self.reset()
+
+    def reset_ball(self, winner: Union[Player, str] = Player.PLAYER_ONE):
+        """Serve the next ball from the player who won the previous round."""
+
+        player = self._coerce_player(winner)
+        if player is Player.PLAYER_ONE:
             self.state.ball_x = self.state.player_x + self.state.PADDLE_RADIUS
             self.state.ball_y = self.state.player_y - self.state.BALL_RADIUS - 10
-            self.state.ball_vx = 0
-            self.state.ball_vy = -self.state.BALL_SPEED
         else:
             self.state.ball_x = self.state.opponent_x + self.state.PADDLE_RADIUS
             self.state.ball_y = self.state.opponent_y - self.state.BALL_RADIUS - 10
-            self.state.ball_vx = 0
-            self.state.ball_vy = -self.state.BALL_SPEED
-    
-    def move_player(self, direction):
-        """Move player sprite based on direction (-1 for left, 1 for right)"""
-        new_x = self.state.player_x + (direction * self.state.MOVEMENT_SPEED)
-        # Keep player within left half of screen (accounting for semicircular paddle)
+        self.state.ball_vx = 0
+        self.state.ball_vy = -self.state.BALL_SPEED
+        self._last_ball_side = self._ball_side()
+
+    @staticmethod
+    def _coerce_player(player: Union[Player, str]) -> Player:
+        if isinstance(player, Player):
+            return player
+        aliases = {
+            "player": Player.PLAYER_ONE,
+            "opponent": Player.PLAYER_TWO,
+            "player_one": Player.PLAYER_ONE,
+            "player_two": Player.PLAYER_TWO,
+        }
+        try:
+            return aliases[player.lower()]
+        except (AttributeError, KeyError) as exc:
+            raise ValueError(f"Unknown player: {player!r}") from exc
+
+    @staticmethod
+    def _coerce_action(action: ActionInput) -> Action:
+        if isinstance(action, Action):
+            return action
+        if isinstance(action, str):
+            aliases = {
+                "left": Action.LEFT,
+                "right": Action.RIGHT,
+                "up": Action.UP,
+                "nothing": Action.NOTHING,
+                "none": Action.NOTHING,
+                "stay": Action.NOTHING,
+            }
+            try:
+                return aliases[action.lower()]
+            except KeyError as exc:
+                raise ValueError(f"Unknown action: {action!r}") from exc
+        if isinstance(action, int):
+            actions = (Action.LEFT, Action.RIGHT, Action.UP, Action.NOTHING)
+            try:
+                return actions[action]
+            except IndexError as exc:
+                raise ValueError(f"Action index must be between 0 and 3: {action}") from exc
+        if isinstance(action, (list, tuple)):
+            if len(action) != 4 or sum(value == 1 for value in action) != 1:
+                raise ValueError("One-hot actions must contain exactly one 1 across four values")
+            return SlimeVolleyball._coerce_action(action.index(1))
+        raise TypeError(f"Unsupported action type: {type(action).__name__}")
+
+    def move_player(self, direction: int):
+        new_x = self.state.player_x + direction * self.state.MOVEMENT_SPEED
         if 0 <= new_x <= self.state.NET_X - self.state.PADDLE_RADIUS * 2:
             self.state.player_x = new_x
-    
+
     def jump_player(self):
-        """Make player jump if on ground"""
         if self.state.player_y >= self.state.GROUND_Y - self.state.PADDLE_RADIUS:
             self.state.player_vy = self.state.JUMP_FORCE
-    
-    def move_opponent(self, direction):
-        """Move opponent sprite based on direction (-1 for left, 1 for right)"""
-        new_x = self.state.opponent_x + (direction * self.state.MOVEMENT_SPEED)
-        # Keep opponent within right half of screen (accounting for semicircular paddle)
-        if self.state.NET_X + self.state.NET_WIDTH <= new_x <= self.state.SCREEN_WIDTH - self.state.PADDLE_RADIUS * 2:
+
+    def move_opponent(self, direction: int):
+        new_x = self.state.opponent_x + direction * self.state.MOVEMENT_SPEED
+        if (
+            self.state.NET_X + self.state.NET_WIDTH <= new_x
+            <= self.state.SCREEN_WIDTH - self.state.PADDLE_RADIUS * 2
+        ):
             self.state.opponent_x = new_x
-    
+
     def jump_opponent(self):
-        """Make opponent jump if on ground"""
         if self.state.opponent_y >= self.state.GROUND_Y - self.state.PADDLE_RADIUS:
             self.state.opponent_vy = self.state.JUMP_FORCE
-    
-    def calculate_ball_velocity_after_collision(self, paddle_x, paddle_y, ball_x, ball_y, ball_vx, ball_vy, paddle_vx, paddle_vy):
-        """Calculate paddle-ball collision and return new ball velocity"""
-        distance_vector = (paddle_x - ball_x, paddle_y - ball_y)
 
-        v_ref = (ball_vx - paddle_vx, ball_vy - paddle_vy)
+    def _play_player_action(self, action: ActionInput):
+        action = self._coerce_action(action)
+        if action is Action.LEFT:
+            self.move_player(-1)
+        elif action is Action.RIGHT:
+            self.move_player(1)
+        elif action is Action.UP:
+            self.jump_player()
 
-        dot_product = distance_vector[0] * v_ref[0] + distance_vector[1] * v_ref[1]
+    def _play_opponent_action(self, action: ActionInput):
+        action = self._coerce_action(action)
+        if action is Action.LEFT:
+            self.move_opponent(-1)
+        elif action is Action.RIGHT:
+            self.move_opponent(1)
+        elif action is Action.UP:
+            self.jump_opponent()
 
-        v_ball_new = (v_ref[0] - 2 *(dot_product / (distance_vector[0]**2 + distance_vector[1]**2)) * distance_vector[0],
-                      v_ref[1] - 2 *(dot_product / (distance_vector[0]**2 + distance_vector[1]**2)) * distance_vector[1])
+    def step(self, player_one_action: ActionInput, player_two_action: ActionInput) -> StepResult:
+        """Apply both model actions once and return states and events."""
 
-        v_ball_new = (v_ball_new[0] + paddle_vx, v_ball_new[1] + paddle_vy)
-        
-        v_ball_new = (v_ball_new[0] * self.state.collision_coefficient, v_ball_new[1] * self.state.collision_coefficient)
-        
-        v_ball_mag = math.sqrt(v_ball_new[0]**2 + v_ball_new[1]**2)
-        if v_ball_mag > self.state.BALL_MAX_SPEED:
-            v_ball_new = (v_ball_new[0] * self.state.BALL_MAX_SPEED / v_ball_mag, v_ball_new[1] * self.state.BALL_MAX_SPEED / v_ball_mag)
-        
-        return v_ball_new 
-    
+        self._play_player_action(player_one_action)
+        self._play_opponent_action(player_two_action)
+        events, done, winner = self._advance()
+        result = StepResult(self.get_states(), frozenset(events), done, winner)
+        self.last_result = result
+        return result
+
+    def play_step(self, player_action: ActionInput, opponent_action: ActionInput):
+        """Backward-compatible alias for :meth:`step`."""
+
+        return self.step(player_action, opponent_action)
+
+    def _advance(self):
+        self.update_paddle_physics()
+        return self._update_ball_physics()
+
+    def update(self):
+        """Advance physics for manual-control callers and return events."""
+
+        events, done, winner = self._advance()
+        self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
+        return frozenset(events), done, winner
 
     def update_paddle_physics(self):
-        """Update paddle physics including gravity and ground collision"""
-        # Update player physics
+        ground_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
         self.state.player_y += self.state.player_vy
         self.state.player_vy += self.state.GRAVITY
-        
-        # Ground collision for player
-        if self.state.player_y > self.state.GROUND_Y - self.state.PADDLE_RADIUS:
-            self.state.player_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
+        if self.state.player_y > ground_y:
+            self.state.player_y = ground_y
             self.state.player_vy = 0
-        
-        # Update opponent physics
+
         self.state.opponent_y += self.state.opponent_vy
         self.state.opponent_vy += self.state.GRAVITY
-        
-        # Ground collision for opponent
-        if self.state.opponent_y > self.state.GROUND_Y - self.state.PADDLE_RADIUS:
-            self.state.opponent_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
+        if self.state.opponent_y > ground_y:
+            self.state.opponent_y = ground_y
             self.state.opponent_vy = 0
-    
-    def update_ball_physics(self):
-        """Update ball physics including movement, gravity, and collisions"""
-        player_reward = 0
-        opponent_reward = 0
+
+    def _ball_side(self) -> Player:
+        return Player.PLAYER_ONE if self.state.ball_x < self.state.NET_X else Player.PLAYER_TWO
+
+    def _update_ball_physics(self):
+        """Advance the ball and return events for one step."""
+
+        events = set()
         done = False
-        # Update ball position
+        winner = None
+        previous_side = self._ball_side()
+
         self.state.ball_x += self.state.ball_vx
         self.state.ball_y += self.state.ball_vy
-        
-        # Apply gravity
         self.state.ball_vy += self.state.GRAVITY
-        
-        # Ball collision with left and right walls
+
         if self.state.ball_x <= self.state.BALL_RADIUS or self.state.ball_x >= self.state.SCREEN_WIDTH - self.state.BALL_RADIUS:
             self.state.ball_vx *= -1
             self.state.ball_x = max(self.state.BALL_RADIUS, min(self.state.SCREEN_WIDTH - self.state.BALL_RADIUS, self.state.ball_x))
-        
-        # Ball collision with ceiling
+
         if self.state.ball_y <= self.state.BALL_RADIUS:
-            self.state.ball_vy *= -self.state.collision_coefficient  # Slight energy loss
+            self.state.ball_vy *= -self.state.collision_coefficient
             self.state.ball_y = self.state.BALL_RADIUS
-        
-        # Ball collision with ground
-        if self.state.ball_y >= self.state.GROUND_Y - self.state.BALL_RADIUS:
-            # Determine which side the ball landed on
-            if self.state.ball_x < self.state.NET_X:
-                self.state.opponent_score += 1
-                self.reset_paddle_positions()
-                self.reset_ball("opponent")
-                player_reward -= 100
-                opponent_reward += 100
-                done = True
-                return (player_reward, opponent_reward, done)
+
+        current_side = self._ball_side()
+        if current_side is not previous_side:
+            if current_side is Player.PLAYER_ONE:
+                events.add(GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE)
             else:
+                events.add(GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE)
+        self._last_ball_side = current_side
+
+        if self.state.ball_y >= self.state.GROUND_Y - self.state.BALL_RADIUS:
+            self.state.ball_y = self.state.GROUND_Y - self.state.BALL_RADIUS
+            if current_side is Player.PLAYER_ONE:
+                winner = Player.PLAYER_TWO
+                self.state.opponent_score += 1
+                events.add(GameEvent.PLAYER_TWO_WON_ROUND)
+            else:
+                winner = Player.PLAYER_ONE
                 self.state.player_score += 1
-                self.reset_paddle_positions()
-                self.reset_ball("player")
-                player_reward += 100
-                opponent_reward -= 100
-                done = True 
-                return (player_reward, opponent_reward, done)
-        
-        if self.state.ball_x < self.state.NET_X:
-            player_reward -= 1
-        else:
-            opponent_reward -= 1
+                events.add(GameEvent.PLAYER_ONE_WON_ROUND)
 
-        # Ball collision with net
-        if (self.state.NET_X - self.state.BALL_RADIUS <= self.state.ball_x <= self.state.NET_X + self.state.NET_WIDTH + self.state.BALL_RADIUS and
-            self.state.ball_y >= self.state.GROUND_Y - self.state.NET_HEIGHT - self.state.BALL_RADIUS):
+            done = True
+            self.reset_paddle_positions()
+            self.reset_ball(winner)
+            return events, done, winner
+
+        if (
+            self.state.NET_X - self.state.BALL_RADIUS <= self.state.ball_x <= self.state.NET_X + self.state.NET_WIDTH + self.state.BALL_RADIUS
+            and self.state.ball_y >= self.state.GROUND_Y - self.state.NET_HEIGHT - self.state.BALL_RADIUS
+        ):
             self.state.ball_vx *= -1
-        
-        # Ball collision with player paddle (semicircle)
-        paddle_center_x = self.state.player_x + self.state.PADDLE_RADIUS
-        paddle_center_y = self.state.player_y + self.state.PADDLE_RADIUS
-        distance = math.sqrt((self.state.ball_x - paddle_center_x)**2 + (self.state.ball_y - paddle_center_y)**2)
-        
-        if (distance <= (self.state.PADDLE_RADIUS + self.state.BALL_RADIUS) * (1 + self.state.collision_margin) and self.state.ball_y <= self.state.player_y + self.state.PADDLE_RADIUS):
-            # Reposition ball exactly at collision boundary
-            collision_distance = self.state.PADDLE_RADIUS + self.state.BALL_RADIUS
-            if distance > 0:  # Avoid division by zero
-                # Normalize the distance vector and set ball position
-                normalized_x = (self.state.ball_x - paddle_center_x) / distance
-                normalized_y = (self.state.ball_y - paddle_center_y) / distance
-                self.state.ball_x = paddle_center_x + normalized_x * collision_distance
-                self.state.ball_y = paddle_center_y + normalized_y * collision_distance
-            
-            self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(paddle_center_x, paddle_center_y, self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy, 0, self.state.player_vy)
-            
-            player_reward += 2
-        # Ball collision with opponent paddle (semicircle)
-        paddle_center_x = self.state.opponent_x + self.state.PADDLE_RADIUS
-        paddle_center_y = self.state.opponent_y + self.state.PADDLE_RADIUS
-        distance = math.sqrt((self.state.ball_x - paddle_center_x)**2 + (self.state.ball_y - paddle_center_y)**2)
-        
-        if (distance <= (self.state.PADDLE_RADIUS + self.state.BALL_RADIUS) * (1 + self.state.collision_margin) and self.state.ball_y <= self.state.opponent_y + self.state.PADDLE_RADIUS):
-            # Reposition ball exactly at collision boundary
-            collision_distance = self.state.PADDLE_RADIUS + self.state.BALL_RADIUS
-            if distance > 0:  # Avoid division by zero
-                # Normalize the distance vector and set ball position
-                normalized_x = (self.state.ball_x - paddle_center_x) / distance
-                normalized_y = (self.state.ball_y - paddle_center_y) / distance
-                self.state.ball_x = paddle_center_x + normalized_x * collision_distance
-                self.state.ball_y = paddle_center_y + normalized_y * collision_distance
-            
-            self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(paddle_center_x, paddle_center_y, self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy, 0, self.state.opponent_vy)
-            opponent_reward += 2
 
-        return (player_reward, opponent_reward, done)
-    def handle_input(self):
-        """Handle pygame key events and call appropriate movement functions"""
+        if self._collides_with_paddle(Player.PLAYER_ONE):
+            events.add(GameEvent.PLAYER_ONE_HIT)
+
+        if self._collides_with_paddle(Player.PLAYER_TWO):
+            events.add(GameEvent.PLAYER_TWO_HIT)
+
+        return events, done, winner
+
+    def update_ball_physics(self):
+        """Advance ball physics and return ``(events, done, winner)``."""
+
+        events, done, winner = self._update_ball_physics()
+        self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
+        return frozenset(events), done, winner
+
+    def _collides_with_paddle(self, player: Player) -> bool:
+        if player is Player.PLAYER_ONE:
+            paddle_x, paddle_y, paddle_vy = self.state.player_x, self.state.player_y, self.state.player_vy
+        else:
+            paddle_x, paddle_y, paddle_vy = self.state.opponent_x, self.state.opponent_y, self.state.opponent_vy
+
+        center_x = paddle_x + self.state.PADDLE_RADIUS
+        center_y = paddle_y + self.state.PADDLE_RADIUS
+        distance = math.hypot(self.state.ball_x - center_x, self.state.ball_y - center_y)
+        collision_radius = (self.state.PADDLE_RADIUS + self.state.BALL_RADIUS) * (1 + self.state.collision_margin)
+        if distance > collision_radius or self.state.ball_y > center_y:
+            return False
+
+        # Do not count the same contact repeatedly after the ball has already
+        # been reflected away from the paddle.
+        distance_vector = (center_x - self.state.ball_x, center_y - self.state.ball_y)
+        relative_velocity = (self.state.ball_vx, self.state.ball_vy - paddle_vy)
+        if distance_vector[0] * relative_velocity[0] + distance_vector[1] * relative_velocity[1] <= 0:
+            return False
+
+        if distance == 0:
+            normal_x, normal_y = (1.0, -1.0 / math.sqrt(2))
+        else:
+            normal_x = (self.state.ball_x - center_x) / distance
+            normal_y = (self.state.ball_y - center_y) / distance
+        collision_distance = self.state.PADDLE_RADIUS + self.state.BALL_RADIUS
+        self.state.ball_x = center_x + normal_x * collision_distance
+        self.state.ball_y = center_y + normal_y * collision_distance
+        self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(
+            center_x, center_y, self.state.ball_x, self.state.ball_y,
+            self.state.ball_vx, self.state.ball_vy, 0, paddle_vy,
+        )
+        return True
+
+    def calculate_ball_velocity_after_collision(self, paddle_x, paddle_y, ball_x, ball_y, ball_vx, ball_vy, paddle_vx, paddle_vy):
+        distance_vector = (paddle_x - ball_x, paddle_y - ball_y)
+        v_ref = (ball_vx - paddle_vx, ball_vy - paddle_vy)
+        denominator = distance_vector[0] ** 2 + distance_vector[1] ** 2
+        if denominator == 0:
+            return ball_vx, -abs(ball_vy)
+        dot_product = distance_vector[0] * v_ref[0] + distance_vector[1] * v_ref[1]
+        new_velocity = (
+            v_ref[0] - 2 * (dot_product / denominator) * distance_vector[0] + paddle_vx,
+            v_ref[1] - 2 * (dot_product / denominator) * distance_vector[1] + paddle_vy,
+        )
+        new_velocity = tuple(value * self.state.collision_coefficient for value in new_velocity)
+        magnitude = math.hypot(*new_velocity)
+        if magnitude > self.state.BALL_MAX_SPEED:
+            scale = self.state.BALL_MAX_SPEED / magnitude
+            new_velocity = (new_velocity[0] * scale, new_velocity[1] * scale)
+        return new_velocity
+
+    def get_state(self, player: Union[Player, str] = Player.PLAYER_ONE) -> List[float]:
+        """Return a 10-value observation from the selected player's perspective."""
+
+        player = self._coerce_player(player)
+        values = [
+            self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy,
+            self.state.player_x, self.state.player_y, self.state.player_vy,
+            self.state.opponent_x, self.state.opponent_y, self.state.opponent_vy,
+        ]
+        if player is Player.PLAYER_ONE:
+            return values
+
+        radius = self.state.PADDLE_RADIUS
+        return [
+            self.state.SCREEN_WIDTH - self.state.ball_x, self.state.ball_y, -self.state.ball_vx, self.state.ball_vy,
+            self.state.SCREEN_WIDTH - self.state.opponent_x - 2 * radius, self.state.opponent_y, self.state.opponent_vy,
+            self.state.SCREEN_WIDTH - self.state.player_x - 2 * radius, self.state.player_y, self.state.player_vy,
+        ]
+
+    def get_states(self) -> Dict[str, List[float]]:
+        """Return observations keyed by the model/player names."""
+
+        return {
+            Player.PLAYER_ONE.value: self.get_state(Player.PLAYER_ONE),
+            Player.PLAYER_TWO.value: self.get_state(Player.PLAYER_TWO),
+        }
+
+    def handle_input(self, control_opponent: bool = True):
+        """Translate keyboard input for a human match.
+
+        Player one uses W/A/D (jump/left/right). Player two uses the
+        Up/Left/Right arrow keys (jump/left/right). Set
+        ``control_opponent=False`` when player two is an AI.
+        """
+
+        if pygame is None:
+            raise RuntimeError("pygame is required for keyboard input")
         keys = pygame.key.get_pressed()
-        
-        # Player movement
-        if keys[K_a]:
-            self.move_player(-self.state.MOVEMENT_SPEED)
-        if keys[K_d]:
-            self.move_player(self.state.MOVEMENT_SPEED)
-        if keys[K_w] or keys[K_SPACE]:
+        if keys[pygame.K_a]:
+            self.move_player(-1)
+        if keys[pygame.K_d]:
+            self.move_player(1)
+        if keys[pygame.K_w]:
             self.jump_player()
-        
-        # Opponent movement (for testing - can be replaced with AI)
-        if keys[K_LEFT]:
-            self.move_opponent(-self.state.MOVEMENT_SPEED)
-        if keys[K_RIGHT]:
-            self.move_opponent(self.state.MOVEMENT_SPEED)
-        if keys[K_UP]:
-            self.jump_opponent()
-        
-        # Reset ball with R key
-        if keys[K_r]:
-            self.reset_ball("player")
-    
-    def draw_semicircle(self, surface, color, center, radius, top_half=True):
-        """Draw a filled semicircle using surface operations"""
-        # Create a temporary surface for the full circle
-        temp_surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
-        
-        # Draw the full circle on the temporary surface
-        pygame.draw.circle(temp_surface, color, (radius, radius), radius)
-        
-        # Create a mask for the semicircle
-        if top_half:
-            # For top half, clear the bottom half
-            pygame.draw.rect(temp_surface, (0, 0, 0, 0), (0, radius, radius * 2, radius))
-        else:
-            # For bottom half, clear the top half
-            pygame.draw.rect(temp_surface, (0, 0, 0, 0), (0, 0, radius * 2, radius))
-        
-        # Blit the semicircle to the main surface
-        surface.blit(temp_surface, (center[0] - radius, center[1] - radius))
-    
-    def draw_paddle_eyes(self, surface, paddle_center, paddle_radius, eye_color, ball_x, ball_y, which_paddle):
-        """Draw eyes on a paddle that always point toward the ball"""
-        # Calculate angle between paddle center and ball
-        dx = ball_x - paddle_center[0]
-        dy = ball_y - paddle_center[1]
-        angle = math.atan2(dy, dx)
-        
-        # Eye positions (slightly above and to the sides of paddle center)
-        eye_offset = paddle_radius * 0.3
-        left_eye_x = paddle_center[0] - eye_offset
-        right_eye_x = paddle_center[0] + eye_offset
-        eye_y = paddle_center[1] - eye_offset * 1.5
-        
-        # Draw eye whites (circles)
-        eye_radius = paddle_radius * 0.2
-        if which_paddle == "player":
-            pygame.draw.circle(surface, self.WHITE, (int(right_eye_x), int(eye_y)), int(eye_radius))
-        else:
-            pygame.draw.circle(surface, self.WHITE, (int(left_eye_x), int(eye_y)), int(eye_radius))
-        
-        # Calculate pupil positions based on ball direction
-        pupil_offset = eye_radius * 0.4
+        if control_opponent:
+            if keys[pygame.K_LEFT]:
+                self.move_opponent(-1)
+            if keys[pygame.K_RIGHT]:
+                self.move_opponent(1)
+            if keys[pygame.K_UP]:
+                self.jump_opponent()
+        if keys[pygame.K_r]:
+            self.reset_ball(Player.PLAYER_ONE)
 
-        if which_paddle == "player":
-            right_pupil_x = right_eye_x + math.cos(angle) * pupil_offset
-            right_pupil_y = eye_y + math.sin(angle) * pupil_offset
-        
-        if which_paddle == "opponent":
-            left_pupil_x = left_eye_x + math.cos(angle) * pupil_offset
-            left_pupil_y = eye_y + math.sin(angle) * pupil_offset
-        
-        # Draw pupils (black circles)
-        pupil_radius = eye_radius * 0.6
-        if which_paddle == "player":
-            pygame.draw.circle(surface, eye_color, (int(right_pupil_x), int(right_pupil_y)), int(pupil_radius))
-        else:
-            pygame.draw.circle(surface, eye_color, (int(left_pupil_x), int(left_pupil_y)), int(pupil_radius))
-        
-        # Draw eye outlines
-        if which_paddle == "player":
-            pygame.draw.circle(surface, eye_color, (int(right_eye_x), int(eye_y)), int(eye_radius), 2)
-        else:
-            pygame.draw.circle(surface, eye_color, (int(left_eye_x), int(eye_y)), int(eye_radius), 2)
-    def update(self):
-        """Update game logic"""
-        self.update_paddle_physics()
-        return self.update_ball_physics()
-    
-    def render(self):
-        """Render all game elements"""
-        # Clear screen
-        self.screen.fill(self.BLACK)
-        
-        # Draw ground
-        pygame.draw.rect(self.screen, self.GREEN, (0, self.state.GROUND_Y, self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT - self.state.GROUND_Y))
-        
-        # Draw net
-        pygame.draw.rect(self.screen, self.WHITE, (self.state.NET_X, self.state.GROUND_Y - self.state.NET_HEIGHT, self.state.NET_WIDTH, self.state.NET_HEIGHT))
-        
-        # Draw player paddle (semicircle) using surface masking
-        self.draw_semicircle(self.screen, self.BLUE, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
-        
-        # Draw opponent paddle (semicircle) using surface masking
-        self.draw_semicircle(self.screen, self.RED, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
-        
-        # Draw eyes on both paddles that track the ball
-        self.draw_paddle_eyes(self.screen, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "player")
-        self.draw_paddle_eyes(self.screen, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "opponent")
-        
-        # Draw ball
-        pygame.draw.circle(self.screen, self.WHITE, (int(self.state.ball_x), int(self.state.ball_y)), self.state.BALL_RADIUS)
-        
-        # Draw scores
-        font = pygame.font.Font(None, 36)
-        player_score_text = font.render(f"Player: {self.state.player_score}", True, self.BLUE)
-        opponent_score_text = font.render(f"Opponent: {self.state.opponent_score}", True, self.RED)
-        self.screen.blit(player_score_text, (10, 10))
-        self.screen.blit(opponent_score_text, (self.state.SCREEN_WIDTH - 150, 10))
-        
-        pygame.display.flip()
-    
+    @staticmethod
+    def _agent_action(agent, state: List[float]) -> Action:
+        """Get an action from a GeneticAgent using its mirrored observation."""
+
+        import torch
+
+        state_tensor = torch.as_tensor(state, dtype=torch.float32)
+        with torch.inference_mode():
+            action_index = agent.move(state_tensor)
+        if hasattr(action_index, "item"):
+            action_index = action_index.item()
+        return list(Action)[int(action_index)]
+
+    def play_against_agent(self, agent):
+        """Run a human player-one versus model player-two match.
+
+        The human uses W/A/D. The model receives the player-two mirrored
+        observation from :meth:`get_state` and controls the arrow-key side.
+        """
+
+        if pygame is None:
+            raise RuntimeError("pygame is required to play against an agent")
+        if self.screen is None:
+            self._initialize_renderer()
+        agent.model.eval()
+        self.running = True
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.running = False
+
+            self.handle_input(control_opponent=False)
+            ai_action = self._agent_action(
+                agent,
+                self.get_state(Player.PLAYER_TWO),
+            )
+            self.step(Action.NOTHING, ai_action)
+            self.render()
+            self.clock.tick(60)
+        pygame.quit()
+
+    def play_against_champion(self, champion_path=None):
+        """Load and play against the saved genetic champion."""
+
+        if champion_path is None:
+            champion_path = (
+                Path(__file__).resolve().parent
+                / "champions"
+                / "agent_genetic_gen_1000.pth"
+            )
+        try:
+            from .agent_genetic import GeneticAgent
+        except ImportError:
+            from agent_genetic import GeneticAgent
+        champion = GeneticAgent.load_model(champion_path)
+        self.play_against_agent(champion)
+
     def reset_paddle_positions(self):
-        """Reset paddle positions to starting positions"""
         self.state.player_x = self.state.SCREEN_WIDTH / 4 - self.state.PADDLE_RADIUS
         self.state.player_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
         self.state.player_vy = 0
-        self.state.opponent_x = self.state.SCREEN_WIDTH * 3/4 - self.state.PADDLE_RADIUS
+        self.state.opponent_x = self.state.SCREEN_WIDTH * 3 / 4 - self.state.PADDLE_RADIUS
         self.state.opponent_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
         self.state.opponent_vy = 0
-    
-    def reset_game(self):
-        """Reset game state"""
-        self.state = GameState()
-        self.reset_ball("player")
-    
-    def _play_player_action(self, player_action):
-        if player_action == 0:
-            self.move_player(-1)
-        elif player_action == 1:
-            self.move_player(1)
-        elif player_action == 2:
-            self.jump_player()
-        elif player_action == 3:
-            pass
 
-    def _play_opponent_action(self, opponent_action):
-        if opponent_action == 0:
-            self.move_opponent(-1)
-        elif opponent_action == 1:
-            self.move_opponent(1)
-        elif opponent_action == 2:
-            self.jump_opponent()
-        elif opponent_action == 3:
-            pass
+    def draw_semicircle(self, surface, color, center, radius, top_half=True):
+        temp_surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(temp_surface, color, (radius, radius), radius)
+        if top_half:
+            pygame.draw.rect(temp_surface, (0, 0, 0, 0), (0, radius, radius * 2, radius))
+        else:
+            pygame.draw.rect(temp_surface, (0, 0, 0, 0), (0, 0, radius * 2, radius))
+        surface.blit(temp_surface, (center[0] - radius, center[1] - radius))
 
-    def play_step(self, player_action, opponent_action):
-        player_action = player_action.index(1)
-        opponent_action = opponent_action.index(1)
-        self._play_player_action(player_action)
-        self._play_opponent_action(opponent_action)
-        player_reward, opponent_reward, done = self.update()
-        
-        # self.render()
-        # self.clock.tick(60)
-        return player_reward, opponent_reward, done
+    def draw_paddle_eyes(self, surface, paddle_center, paddle_radius, eye_color, ball_x, ball_y, which_paddle):
+        angle = math.atan2(ball_y - paddle_center[1], ball_x - paddle_center[0])
+        eye_offset = paddle_radius * 0.3
+        eye_x = paddle_center[0] + (eye_offset if which_paddle == "player" else -eye_offset)
+        eye_y = paddle_center[1] - eye_offset * 1.5
+        eye_radius = paddle_radius * 0.2
+        pygame.draw.circle(surface, self.WHITE, (int(eye_x), int(eye_y)), int(eye_radius))
+        pupil_offset = eye_radius * 0.4
+        pupil_x = eye_x + math.cos(angle) * pupil_offset
+        pupil_y = eye_y + math.sin(angle) * pupil_offset
+        pygame.draw.circle(surface, eye_color, (int(pupil_x), int(pupil_y)), int(eye_radius * 0.6))
+        pygame.draw.circle(surface, eye_color, (int(eye_x), int(eye_y)), int(eye_radius), 2)
 
-    def get_state(self):
-        return [
-            self.state.ball_x,
-            self.state.ball_y,
-            self.state.ball_vx,
-            self.state.ball_vy,
-            self.state.player_x,
-            self.state.player_y,
-            self.state.player_vy,
-            self.state.opponent_x,
-            self.state.opponent_y,
-            self.state.opponent_vy
-        ]
-        # return {
-        #     "ball_x" : self.state.ball_x, 
-        #     "ball_y" : self.state.ball_y,
-        #     "ball_vx" : self.state.ball_vx,
-        #     "ball_vy" : self.state.ball_vy,
-        #     "player_x" : self.state.player_x,
-        #     "player_y" : self.state.player_y,
-        #     "player_vy" : self.state.player_vy,
-        #     "opponent_x" : self.state.opponent_x,
-        #     "opponent_y" : self.state.opponent_y,
-        #     "opponent_vy" : self.state.opponent_vy
-        # }
-
-    def play_model(self, type):
-        self.agent = Agent(type)
-        self.agent.load_model()
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    self.running = False 
-                elif event.type == KEYDOWN:
-                        if event.key == K_ESCAPE:
-                            self.running = False 
-            self.handle_input()
-            
-            action = self.agent._get_best_action(self.get_state()).index(1)
-            if type == "opponent":
-                print("Opponent AI Action:", action)
-                self._play_opponent_action(action)
-            else:
-                print("Player AI Action:", action)
-                self._play_player_action(action)
-
-            self.update()
-            self.render()
-
-            self.clock.tick(60)
-        pygame.quit()
-        sys.exit()
-            
-
+    def render(self):
+        if pygame is None:
+            raise RuntimeError("pygame is required for rendering")
+        if self.screen is None:
+            self._initialize_renderer()
+        self.screen.fill(self.BLACK)
+        pygame.draw.rect(self.screen, self.GREEN, (0, self.state.GROUND_Y, self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT - self.state.GROUND_Y))
+        pygame.draw.rect(self.screen, self.WHITE, (self.state.NET_X, self.state.GROUND_Y - self.state.NET_HEIGHT, self.state.NET_WIDTH, self.state.NET_HEIGHT))
+        self.draw_semicircle(self.screen, self.BLUE, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
+        self.draw_semicircle(self.screen, self.RED, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
+        self.draw_paddle_eyes(self.screen, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "player")
+        self.draw_paddle_eyes(self.screen, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "opponent")
+        pygame.draw.circle(self.screen, self.WHITE, (int(self.state.ball_x), int(self.state.ball_y)), self.state.BALL_RADIUS)
+        font = pygame.font.Font(None, 36)
+        self.screen.blit(font.render(f"Player: {self.state.player_score}", True, self.BLUE), (10, 10))
+        self.screen.blit(font.render(f"Opponent: {self.state.opponent_score}", True, self.RED), (self.state.SCREEN_WIDTH - 150, 10))
+        pygame.display.flip()
 
     def run(self, manual_control=True):
-        """Main game loop"""
-        while self.running:
-            # Handle events
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    self.running = False
-                elif event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
-                        self.running = False
-            
-            self.handle_input()
+        """Run the optional pygame manual-control loop."""
 
-            # Update game logic
+        if pygame is None:
+            raise RuntimeError("pygame is required to run the manual game")
+        if self.screen is None:
+            self._initialize_renderer()
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.running = False
+            if manual_control:
+                self.handle_input()
             self.update()
-            
-            # Render
             self.render()
-            
-            # Control frame rate
             self.clock.tick(60)
-        
         pygame.quit()
-        sys.exit()
+
 
 if __name__ == "__main__":
-    game = SlimeVolleyball()
+    game = SlimeVolleyball(render=True)
     if len(sys.argv) > 1:
-        type = sys.argv[1]
-        if type.find("player") > 0:
-            game.play_model("player")
-        else:
-            game.play_model("opponent")
+        game.play_against_champion(sys.argv[1])
     else:
         game.run()
-

@@ -1,6 +1,47 @@
-from game import GameState, SlimeVolleyball
+from game import GameEvent, Player, SlimeVolleyball
 from agent import Agent
 import matplotlib.pyplot as plt
+
+
+HIT_REWARD = 2.0
+SIDE_CROSSING_REWARD = 4.0
+ROUND_WIN_REWARD = 100.0
+ROUND_LOSS_REWARD = -100.0
+
+
+def _event_rewards(events, hit_counts):
+    """Create DQN rewards from game events, outside the game engine."""
+
+    player_reward = 0.0
+    opponent_reward = 0.0
+
+    if (
+        GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE in events
+        or GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE in events
+    ):
+        hit_counts[Player.PLAYER_ONE] = 0
+        hit_counts[Player.PLAYER_TWO] = 0
+
+    if GameEvent.PLAYER_ONE_HIT in events:
+        count = hit_counts[Player.PLAYER_ONE]
+        player_reward += HIT_REWARD / (2 ** count)
+        hit_counts[Player.PLAYER_ONE] += 1
+    if GameEvent.PLAYER_TWO_HIT in events:
+        count = hit_counts[Player.PLAYER_TWO]
+        opponent_reward += HIT_REWARD / (2 ** count)
+        hit_counts[Player.PLAYER_TWO] += 1
+    if GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE in events:
+        player_reward += SIDE_CROSSING_REWARD
+    if GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE in events:
+        opponent_reward += SIDE_CROSSING_REWARD
+    if GameEvent.PLAYER_ONE_WON_ROUND in events:
+        player_reward += ROUND_WIN_REWARD
+        opponent_reward += ROUND_LOSS_REWARD
+    if GameEvent.PLAYER_TWO_WON_ROUND in events:
+        opponent_reward += ROUND_WIN_REWARD
+        player_reward += ROUND_LOSS_REWARD
+
+    return player_reward, opponent_reward
 
 class Trainer:
     def __init__(self):
@@ -46,24 +87,33 @@ def train():
     max_player_reward = float("-inf")
     max_opp_reward = float("-inf")
     n_games = 0
+    hit_counts = {
+        Player.PLAYER_ONE: 0,
+        Player.PLAYER_TWO: 0,
+    }
     try:
         while True:
-            state_old = t.game.get_state()
+            states_old = t.game.get_states()
+            state_old = states_old[Player.PLAYER_ONE.value]
+            opponent_state_old = states_old[Player.PLAYER_TWO.value]
             player_move = t.agent_player.get_action(state_old)
-            opponent_move = t.agent_opponent.get_action(state_old)
+            opponent_move = t.agent_opponent.get_action(opponent_state_old)
 
-            player_reward, opponent_reward, done = t.game.play_step(player_move, opponent_move)
+            result = t.game.play_step(player_move, opponent_move)
+            player_reward, opponent_reward = _event_rewards(result.events, hit_counts)
+            done = result.done
 
             player_reward_col += player_reward
             opponent_reward_col += opponent_reward
 
-            state_new = t.game.get_state()
+            state_new = result.states[Player.PLAYER_ONE.value]
+            opponent_state_new = result.states[Player.PLAYER_TWO.value]
 
             t.agent_player.train_short_memory(state_old, player_move, player_reward, state_new, done)
-            t.agent_opponent.train_short_memory(state_new, opponent_move, opponent_reward, state_new, done)
+            t.agent_opponent.train_short_memory(opponent_state_old, opponent_move, opponent_reward, opponent_state_new, done)
 
             t.agent_player.remember(state_old, player_move, player_reward, state_new, done)
-            t.agent_opponent.remember(state_old, opponent_move, opponent_reward, state_new, done)
+            t.agent_opponent.remember(opponent_state_old, opponent_move, opponent_reward, opponent_state_new, done)
 
             if done:
                 player_reward_collected.append(player_reward_col)
@@ -79,6 +129,8 @@ def train():
 
                 player_reward_col = 0
                 opponent_reward_col = 0
+                hit_counts[Player.PLAYER_ONE] = 0
+                hit_counts[Player.PLAYER_TWO] = 0
                 
                 n_games += 1
                 t.agent_player.n_games += 1
