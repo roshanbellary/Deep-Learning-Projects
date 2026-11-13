@@ -69,25 +69,46 @@ points: `+2` for the first hit while the ball remains on a side, `+4` for
 sending the ball to the other side, and `+100` for winning a round.
 Consecutive hits on the same side decay by half each time (`+2`, `+1`,
 `+0.5`, ...). The training-layer hit counter resets when the ball crosses the
-net or a new round begins.
+net or a new round begins. Pass `use_shaped_rewards=False` to `train()` to
+score only round wins.
 
 ### Genetic self-play
 
-`train_agent_genetic.py` provides `_simulate_games(agent1, agent2, games=2)`.
-By default it plays two rounds total, swapping court sides between rounds, and uses the mirrored
-observations from `game.get_states()`, and scores each agent from hit,
-crossing, and round-win events. It returns aggregate scores, win/draw counts,
-and per-round records. The dynamic reward totals determine each matchup's
-winner, and Elo is the sole population-ranking metric. Elo values on the two
-`GeneticAgent` instances are updated after each round. Selected survivors are
-reset to Elo `1000` before the next generation. Matchups are evaluated with a four-process
-multiprocessing pool; fitness and Elo updates are applied in the parent
-process after worker results return.
+`train_agent_genetic.py` evolves a fixed-size population of `GeneticAgent`s.
+Agents are never rated against each other. Each generation plays every agent
+against the same set of frozen opponents, and those opponents' ratings never
+change:
 
-`GeneticAgent.mutate(mutation_rate=0.01, mutation_std=0.1)` returns a new
-agent. It deep-copies the parent model, samples an independent Bernoulli mask
-for every parameter element, and adds Gaussian noise to masked elements only;
-the parent is unchanged.
+- **Rolling window:** the top 5 new agents from each of the last 5 generations.
+- **Ladder:** the champion of every 10th generation, kept permanently (at most
+  10 rungs; when it overflows, every other rung is dropped, keeping the oldest).
+- **Bootstrap anchors:** generation 1 has no history, so it plays 5 random
+  agents pinned at rating `1000`. They set the zero point and are then removed.
+  Later ratings stay on that scale because each generation is rated against
+  frozen ratings from earlier ones.
+
+Ratings come from `performance_rating`: the single rating whose expected score
+against the opponents equals the actual score. It does not depend on game
+order, and a virtual draw against the average opponent keeps perfect records
+finite. Agents entering the pool are re-rated with extra games
+(`entry_games_per_opponent`) before their rating is frozen.
+
+Round winners are decided by the event reward totals. Training serves with a
+small random sideways velocity (`SERVE_SIDEWAYS_JITTER`), because the game and
+the policies are deterministic and repeat games would otherwise be identical.
+Each generation logs the champion's win rate against the oldest and newest
+ladder rungs next to the win rate its rating predicts. A large gap means the
+rating scale has drifted.
+
+The top `survival_rate` fraction survives unchanged, and the rest of the
+population is refilled with mutated children of survivors.
+
+Observations are normalized inside `GeneticAgent.move` so positions and
+velocities fall roughly in `[-1, 1]`; raw pixel values saturate the network.
+
+`GeneticAgent.mutate(mutation_std=0.02)` returns a new agent. It deep-copies
+the parent model and adds Gaussian noise to every weight; the parent is
+unchanged.
 
 ### AI Agent (`agent.py`)
 - Implements Deep Q-Learning with experience replay

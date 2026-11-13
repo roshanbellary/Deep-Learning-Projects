@@ -1,32 +1,18 @@
-"""Simulation and rendering engine for two-agent Slime Volleyball.
-
-The simulation API is intentionally independent from pygame::
-
-    game = SlimeVolleyball()
-    states = game.reset()
-    result = game.step(Action.LEFT, Action.NOTHING)
-
-``result.states`` contains one observation per model and ``result.events``
-contains the events that occurred during that step. A round ending sets
-``result.done`` to ``True``. Reward shaping is handled by the caller.
-"""
-
 from dataclasses import dataclass
 from enum import Enum
 import math
+import random
 from pathlib import Path
 import sys
 from typing import Dict, FrozenSet, List, Optional, Tuple, Union
 
 try:
     import pygame
-except ImportError:  # The physics environment can run without the renderer.
+except ImportError:
     pygame = None
 
 
 class Action(Enum):
-    """Action space exposed to each agent."""
-
     LEFT = "left"
     RIGHT = "right"
     UP = "up"
@@ -43,8 +29,6 @@ class Player(Enum):
 
 
 class GameEvent(Enum):
-    """Events emitted by one simulation step."""
-
     PLAYER_ONE_HIT = "player_one_hit"
     PLAYER_TWO_HIT = "player_two_hit"
     BALL_CROSSED_TO_PLAYER_ONE_SIDE = "ball_crossed_to_player_one_side"
@@ -52,7 +36,6 @@ class GameEvent(Enum):
     PLAYER_ONE_WON_ROUND = "player_one_won_round"
     PLAYER_TWO_WON_ROUND = "player_two_won_round"
 
-    # Backwards-compatible aliases for the original names.
     PLAYER_HIT = PLAYER_ONE_HIT
     OPPONENT_HIT = PLAYER_TWO_HIT
     PLAYER_GAME_OVER = PLAYER_ONE_WON_ROUND
@@ -61,8 +44,6 @@ class GameEvent(Enum):
 
 @dataclass(frozen=True)
 class StepResult:
-    """The complete result of one pair of agent actions."""
-
     states: Dict[str, List[float]]
     events: FrozenSet[GameEvent]
     done: bool
@@ -70,21 +51,15 @@ class StepResult:
 
     @property
     def event_flags(self) -> Dict[GameEvent, bool]:
-        """Return every event as a boolean indicator for reward code."""
-
         return {event: event in self.events for event in GameEvent}
 
     def __iter__(self):
-        """Allow ``states, events, done = result`` unpacking."""
-
         yield self.states
         yield self.events
         yield self.done
 
 
 class GameState:
-    """Mutable physical state of the game."""
-
     def __init__(self):
         self.SCREEN_WIDTH = 750
         self.SCREEN_HEIGHT = 370
@@ -122,14 +97,9 @@ class GameState:
 
 ActionInput = Union[Action, str, int, List[int], Tuple[int, ...]]
 class SlimeVolleyball:
-    """Two-player Slime Volleyball environment.
-
-    ``render=False`` is the default for fast genetic-algorithm simulation.
-    Set ``render=True`` when using ``run()`` or ``render()`` for pygame.
-    """
-
-    def __init__(self, render: bool = False):
+    def __init__(self, render: bool = False, serve_sideways_jitter: float = 0.0):
         self.render_enabled = render
+        self.serve_sideways_jitter = serve_sideways_jitter
         self.screen = None
         self.clock = None
         self.running = True
@@ -161,13 +131,9 @@ class SlimeVolleyball:
         self.clock = pygame.time.Clock()
 
     def initialize_game(self) -> Dict[str, List[float]]:
-        """Reset the environment and return observations for both models."""
-
         return self.reset()
 
     def reset(self) -> Dict[str, List[float]]:
-        """Start a new game and return one state for each player model."""
-
         self.state = GameState()
         self.running = True
         self.last_result = None
@@ -175,13 +141,9 @@ class SlimeVolleyball:
         return self.get_states()
 
     def reset_game(self) -> Dict[str, List[float]]:
-        """Backward-compatible alias for :meth:`reset`."""
-
         return self.reset()
 
     def reset_ball(self, winner: Union[Player, str] = Player.PLAYER_ONE):
-        """Serve the next ball from the player who won the previous round."""
-
         player = self._coerce_player(winner)
         if player is Player.PLAYER_ONE:
             self.state.ball_x = self.state.player_x + self.state.PADDLE_RADIUS
@@ -189,7 +151,7 @@ class SlimeVolleyball:
         else:
             self.state.ball_x = self.state.opponent_x + self.state.PADDLE_RADIUS
             self.state.ball_y = self.state.opponent_y - self.state.BALL_RADIUS - 10
-        self.state.ball_vx = 0
+        self.state.ball_vx = random.uniform(-self.serve_sideways_jitter, self.serve_sideways_jitter)
         self.state.ball_vy = -self.state.BALL_SPEED
         self._last_ball_side = self._ball_side()
 
@@ -277,8 +239,6 @@ class SlimeVolleyball:
             self.jump_opponent()
 
     def step(self, player_one_action: ActionInput, player_two_action: ActionInput) -> StepResult:
-        """Apply both model actions once and return states and events."""
-
         self._play_player_action(player_one_action)
         self._play_opponent_action(player_two_action)
         events, done, winner = self._advance()
@@ -287,8 +247,6 @@ class SlimeVolleyball:
         return result
 
     def play_step(self, player_action: ActionInput, opponent_action: ActionInput):
-        """Backward-compatible alias for :meth:`step`."""
-
         return self.step(player_action, opponent_action)
 
     def _advance(self):
@@ -296,8 +254,6 @@ class SlimeVolleyball:
         return self._update_ball_physics()
 
     def update(self):
-        """Advance physics for manual-control callers and return events."""
-
         events, done, winner = self._advance()
         self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
         return frozenset(events), done, winner
@@ -320,8 +276,6 @@ class SlimeVolleyball:
         return Player.PLAYER_ONE if self.state.ball_x < self.state.NET_X else Player.PLAYER_TWO
 
     def _update_ball_physics(self):
-        """Advance the ball and return events for one step."""
-
         events = set()
         done = False
         winner = None
@@ -378,8 +332,6 @@ class SlimeVolleyball:
         return events, done, winner
 
     def update_ball_physics(self):
-        """Advance ball physics and return ``(events, done, winner)``."""
-
         events, done, winner = self._update_ball_physics()
         self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
         return frozenset(events), done, winner
@@ -397,8 +349,6 @@ class SlimeVolleyball:
         if distance > collision_radius or self.state.ball_y > center_y:
             return False
 
-        # Do not count the same contact repeatedly after the ball has already
-        # been reflected away from the paddle.
         distance_vector = (center_x - self.state.ball_x, center_y - self.state.ball_y)
         relative_velocity = (self.state.ball_vx, self.state.ball_vy - paddle_vy)
         if distance_vector[0] * relative_velocity[0] + distance_vector[1] * relative_velocity[1] <= 0:
@@ -437,8 +387,6 @@ class SlimeVolleyball:
         return new_velocity
 
     def get_state(self, player: Union[Player, str] = Player.PLAYER_ONE) -> List[float]:
-        """Return a 10-value observation from the selected player's perspective."""
-
         player = self._coerce_player(player)
         values = [
             self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy,
@@ -456,21 +404,12 @@ class SlimeVolleyball:
         ]
 
     def get_states(self) -> Dict[str, List[float]]:
-        """Return observations keyed by the model/player names."""
-
         return {
             Player.PLAYER_ONE.value: self.get_state(Player.PLAYER_ONE),
             Player.PLAYER_TWO.value: self.get_state(Player.PLAYER_TWO),
         }
 
     def handle_input(self, control_opponent: bool = True):
-        """Translate keyboard input for a human match.
-
-        Player one uses W/A/D (jump/left/right). Player two uses the
-        Up/Left/Right arrow keys (jump/left/right). Set
-        ``control_opponent=False`` when player two is an AI.
-        """
-
         if pygame is None:
             raise RuntimeError("pygame is required for keyboard input")
         keys = pygame.key.get_pressed()
@@ -492,8 +431,6 @@ class SlimeVolleyball:
 
     @staticmethod
     def _agent_action(agent, state: List[float]) -> Action:
-        """Get an action from a GeneticAgent using its mirrored observation."""
-
         import torch
 
         state_tensor = torch.as_tensor(state, dtype=torch.float32)
@@ -504,12 +441,6 @@ class SlimeVolleyball:
         return list(Action)[int(action_index)]
 
     def play_against_agent(self, agent):
-        """Run a human player-one versus model player-two match.
-
-        The human uses W/A/D. The model receives the player-two mirrored
-        observation from :meth:`get_state` and controls the arrow-key side.
-        """
-
         if pygame is None:
             raise RuntimeError("pygame is required to play against an agent")
         if self.screen is None:
@@ -534,8 +465,6 @@ class SlimeVolleyball:
         pygame.quit()
 
     def play_against_champion(self, champion_path=None):
-        """Load and play against the saved genetic champion."""
-
         if champion_path is None:
             champion_path = (
                 Path(__file__).resolve().parent
@@ -598,8 +527,6 @@ class SlimeVolleyball:
         pygame.display.flip()
 
     def run(self, manual_control=True):
-        """Run the optional pygame manual-control loop."""
-
         if pygame is None:
             raise RuntimeError("pygame is required to run the manual game")
         if self.screen is None:

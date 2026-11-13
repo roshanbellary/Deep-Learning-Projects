@@ -37,11 +37,6 @@ class Agent:
         return final_move
     
     def get_action(self, state): 
-        # state constists of 10 dimensions
-        # ball position and ball velocity
-        # player position and player vertical velocity
-        # opponent position and opponent vertical velocity
-        #action consists of 4 possibilities: move left, right, jump, stay
         self.epsilon =  0.5 * math.exp(math.log(0.5)/10000 * self.n_games)
 
         final_move = [0, 0, 0, 0]
@@ -68,7 +63,6 @@ class Agent:
 
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done) 
-
 
 
 if __name__ == "__main__":

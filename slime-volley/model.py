@@ -13,7 +13,7 @@ class QNet(nn.Module):
             nn.ReLU(),
             nn.Linear(256, 256),
             nn.ReLU(),
-            nn.Linear(256, 4) # move left, move right, jump, stay
+            nn.Linear(256, 4)
         )
     def forward(self, x):
         if x.ndim == 1:

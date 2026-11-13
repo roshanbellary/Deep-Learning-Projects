@@ -10,8 +10,6 @@ ROUND_LOSS_REWARD = -100.0
 
 
 def _event_rewards(events, hit_counts):
-    """Create DQN rewards from game events, outside the game engine."""
-
     player_reward = 0.0
     opponent_reward = 0.0
 
@@ -64,16 +62,14 @@ def plot_rewards(player_reward_collected, opponent_reward_collected, block=True)
 
     plt.clf()
     plt.subplot(1, 2, 1)
-    # plt.plot(games, player_reward_collected, marker='o')
     plt.plot(games, p_avg, '-')
     plt.title("Player Rewards")
 
     plt.subplot(1, 2, 2)
-    # plt.plot(games, opponent_reward_collected, marker='o')
     plt.plot(games, o_avg, '-')
     plt.title("Opponent Rewards")
 
-    plt.pause(0.01)   # keeps one figure window open
+    plt.pause(0.01)
 
 
 def train():
