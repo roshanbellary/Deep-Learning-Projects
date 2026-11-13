@@ -12,6 +12,43 @@ except ImportError:
     pygame = None
 
 
+ARENA_WIDTH_UNITS = 48.0
+SCREEN_WIDTH_PIXELS = 750
+SCREEN_HEIGHT_PIXELS = 400
+GROUND_Y_PIXELS = 350
+PIXELS_PER_UNIT = SCREEN_WIDTH_PIXELS / ARENA_WIDTH_UNITS
+FRAMES_PER_SECOND = 60
+SCORE_MARGIN_PIXELS = 10
+
+SLIME_RADIUS_UNITS = 1.5
+BALL_RADIUS_UNITS = 0.5
+NET_WIDTH_UNITS = 1.0
+NET_HEIGHT_UNITS = 3.5
+SERVE_HEIGHT_UNITS = 6.0
+
+GRAVITY_UNITS_PER_SECOND_SQUARED = 29.4
+SLIME_JUMP_SPEED_UNITS_PER_SECOND = 13.5
+SLIME_RUN_SPEED_UNITS_PER_SECOND = 17.5
+BALL_MAX_SPEED_UNITS_PER_SECOND = 22.5
+BALL_RESTITUTION = 1.0
+
+
+def units_to_pixels(distance_units: float) -> float:
+    return distance_units * PIXELS_PER_UNIT
+
+
+def speed_to_pixels_per_frame(speed_units_per_second: float) -> float:
+    return speed_units_per_second * PIXELS_PER_UNIT / FRAMES_PER_SECOND
+
+
+def acceleration_to_pixels_per_frame_squared(acceleration_units_per_second_squared: float) -> float:
+    return acceleration_units_per_second_squared * PIXELS_PER_UNIT / FRAMES_PER_SECOND ** 2
+
+
+def clamp(value: float, lower_bound: float, upper_bound: float) -> float:
+    return max(lower_bound, min(upper_bound, value))
+
+
 class Action(Enum):
     LEFT = "left"
     RIGHT = "right"
@@ -42,6 +79,31 @@ class GameEvent(Enum):
     OPPONENT_GAME_OVER = PLAYER_TWO_WON_ROUND
 
 
+HIT_EVENT_BY_PLAYER = {
+    Player.PLAYER_ONE: GameEvent.PLAYER_ONE_HIT,
+    Player.PLAYER_TWO: GameEvent.PLAYER_TWO_HIT,
+}
+CROSSING_EVENT_BY_DESTINATION = {
+    Player.PLAYER_ONE: GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE,
+    Player.PLAYER_TWO: GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE,
+}
+ROUND_WIN_EVENT_BY_PLAYER = {
+    Player.PLAYER_ONE: GameEvent.PLAYER_ONE_WON_ROUND,
+    Player.PLAYER_TWO: GameEvent.PLAYER_TWO_WON_ROUND,
+}
+STATE_PREFIX_BY_PLAYER = {
+    Player.PLAYER_ONE: "player",
+    Player.PLAYER_TWO: "opponent",
+}
+LEFT_DIRECTION = -1
+RIGHT_DIRECTION = 1
+NO_DIRECTION = 0
+VIEW_MIRROR_SIGN_BY_PLAYER = {
+    Player.PLAYER_ONE: 1,
+    Player.PLAYER_TWO: -1,
+}
+
+
 @dataclass(frozen=True)
 class StepResult:
     states: Dict[str, List[float]]
@@ -59,49 +121,72 @@ class StepResult:
         yield self.done
 
 
+@dataclass(frozen=True)
+class Contact:
+    normal_x: float
+    normal_y: float
+    penetration: float
+
+
 class GameState:
     def __init__(self):
-        self.SCREEN_WIDTH = 750
-        self.SCREEN_HEIGHT = 370
-        self.GROUND_Y = 300
+        self.SCREEN_WIDTH = SCREEN_WIDTH_PIXELS
+        self.SCREEN_HEIGHT = SCREEN_HEIGHT_PIXELS
+        self.GROUND_Y = GROUND_Y_PIXELS
 
-        self.PADDLE_RADIUS = 40
-        self.BALL_RADIUS = 10
-        self.BALL_SPEED = 4
-        self.BALL_MAX_SPEED = 12
-        self.MOVEMENT_SPEED = 2
-        self.GRAVITY = 0.4
-        self.JUMP_FORCE = -6
+        self.PADDLE_RADIUS = units_to_pixels(SLIME_RADIUS_UNITS)
+        self.BALL_RADIUS = units_to_pixels(BALL_RADIUS_UNITS)
+        self.BALL_MAX_SPEED = speed_to_pixels_per_frame(BALL_MAX_SPEED_UNITS_PER_SECOND)
+        self.MOVEMENT_SPEED = speed_to_pixels_per_frame(SLIME_RUN_SPEED_UNITS_PER_SECOND)
+        self.GRAVITY = acceleration_to_pixels_per_frame_squared(GRAVITY_UNITS_PER_SECOND_SQUARED)
+        self.JUMP_FORCE = -speed_to_pixels_per_frame(SLIME_JUMP_SPEED_UNITS_PER_SECOND)
+        self.SERVE_HEIGHT = units_to_pixels(SERVE_HEIGHT_UNITS)
 
-        self.NET_X = 375
-        self.NET_WIDTH = 5
-        self.NET_HEIGHT = 50
+        self.NET_WIDTH = units_to_pixels(NET_WIDTH_UNITS)
+        self.NET_HEIGHT = units_to_pixels(NET_HEIGHT_UNITS)
+        self.NET_X = self.SCREEN_WIDTH / 2 - self.NET_WIDTH / 2
 
-        self.collision_coefficient = 1
-        self.collision_margin = 0
+        self.collision_coefficient = BALL_RESTITUTION
 
-        self.player_x = 125
-        self.player_y = self.GROUND_Y - self.PADDLE_RADIUS
-        self.player_vy = 0
-        self.opponent_x = 562.5
-        self.opponent_y = self.GROUND_Y - self.PADDLE_RADIUS
-        self.opponent_vy = 0
+        self.place_slimes_at_start()
 
-        self.ball_x = 375
-        self.ball_y = 100
-        self.ball_vx = 0
-        self.ball_vy = 0
+        self.ball_x = self.SCREEN_WIDTH / 2
+        self.ball_y = self.GROUND_Y - self.SERVE_HEIGHT
+        self.ball_vx = 0.0
+        self.ball_vy = 0.0
 
         self.player_score = 0
         self.opponent_score = 0
 
+    @property
+    def NET_CENTER_X(self) -> float:
+        return self.SCREEN_WIDTH / 2
+
+    @property
+    def SLIME_GROUND_TOP_Y(self) -> float:
+        return self.GROUND_Y - self.PADDLE_RADIUS
+
+    def place_slimes_at_start(self):
+        self.player_x = self.SCREEN_WIDTH / 4 - self.PADDLE_RADIUS
+        self.player_y = self.SLIME_GROUND_TOP_Y
+        self.player_vx = 0.0
+        self.player_vy = 0.0
+        self.opponent_x = self.SCREEN_WIDTH * 3 / 4 - self.PADDLE_RADIUS
+        self.opponent_y = self.SLIME_GROUND_TOP_Y
+        self.opponent_vx = 0.0
+        self.opponent_vy = 0.0
+
+
 ActionInput = Union[Action, str, int, List[int], Tuple[int, ...]]
+
+
 class SlimeVolleyball:
     def __init__(self, render: bool = False, serve_sideways_jitter: float = 0.0):
         self.render_enabled = render
         self.serve_sideways_jitter = serve_sideways_jitter
         self.screen = None
         self.clock = None
+        self.score_font = None
         self.running = True
 
         self.WHITE = (255, 255, 255)
@@ -112,7 +197,6 @@ class SlimeVolleyball:
 
         self.state = GameState()
         self.last_result: Optional[StepResult] = None
-        self._last_ball_side = self._ball_side()
         self.reset_ball(Player.PLAYER_ONE)
 
         if self.render_enabled:
@@ -129,31 +213,31 @@ class SlimeVolleyball:
         )
         pygame.display.set_caption("Slime Volleyball")
         self.clock = pygame.time.Clock()
+        self.score_font = pygame.font.Font(None, 36)
 
     def initialize_game(self) -> Dict[str, List[float]]:
         return self.reset()
 
-    def reset(self) -> Dict[str, List[float]]:
+    def reset(self, server: Union[Player, str] = Player.PLAYER_ONE) -> Dict[str, List[float]]:
         self.state = GameState()
         self.running = True
         self.last_result = None
-        self.reset_ball(Player.PLAYER_ONE)
+        self.reset_ball(server)
         return self.get_states()
 
     def reset_game(self) -> Dict[str, List[float]]:
         return self.reset()
 
-    def reset_ball(self, winner: Union[Player, str] = Player.PLAYER_ONE):
-        player = self._coerce_player(winner)
-        if player is Player.PLAYER_ONE:
-            self.state.ball_x = self.state.player_x + self.state.PADDLE_RADIUS
-            self.state.ball_y = self.state.player_y - self.state.BALL_RADIUS - 10
-        else:
-            self.state.ball_x = self.state.opponent_x + self.state.PADDLE_RADIUS
-            self.state.ball_y = self.state.opponent_y - self.state.BALL_RADIUS - 10
+    def reset_ball(self, server: Union[Player, str] = Player.PLAYER_ONE):
+        server = self._coerce_player(server)
+        server_center_x, _ = self._slime_center(server)
+        self.state.ball_x = server_center_x
+        self.state.ball_y = self.state.GROUND_Y - self.state.SERVE_HEIGHT
         self.state.ball_vx = random.uniform(-self.serve_sideways_jitter, self.serve_sideways_jitter)
-        self.state.ball_vy = -self.state.BALL_SPEED
-        self._last_ball_side = self._ball_side()
+        self.state.ball_vy = 0.0
+
+    def reset_paddle_positions(self):
+        self.state.place_slimes_at_start()
 
     @staticmethod
     def _coerce_player(player: Union[Player, str]) -> Player:
@@ -199,192 +283,236 @@ class SlimeVolleyball:
             return SlimeVolleyball._coerce_action(action.index(1))
         raise TypeError(f"Unsupported action type: {type(action).__name__}")
 
+    def _get_slime_attribute(self, player: Player, attribute: str) -> float:
+        return getattr(self.state, f"{STATE_PREFIX_BY_PLAYER[player]}_{attribute}")
+
+    def _set_slime_attribute(self, player: Player, attribute: str, value: float):
+        setattr(self.state, f"{STATE_PREFIX_BY_PLAYER[player]}_{attribute}", value)
+
+    def _slime_center(self, player: Player) -> Tuple[float, float]:
+        radius = self.state.PADDLE_RADIUS
+        return (
+            self._get_slime_attribute(player, "x") + radius,
+            self._get_slime_attribute(player, "y") + radius,
+        )
+
+    def _slime_x_bounds(self, player: Player) -> Tuple[float, float]:
+        diameter = 2 * self.state.PADDLE_RADIUS
+        if player is Player.PLAYER_ONE:
+            return 0.0, self.state.NET_X - diameter
+        return self.state.NET_X + self.state.NET_WIDTH, self.state.SCREEN_WIDTH - diameter
+
+    def _is_grounded(self, player: Player) -> bool:
+        return self._get_slime_attribute(player, "y") >= self.state.SLIME_GROUND_TOP_Y
+
+    def _steer_slime(self, player: Player, horizontal_direction: int):
+        self._set_slime_attribute(player, "vx", horizontal_direction * self.state.MOVEMENT_SPEED)
+
+    def _jump_slime(self, player: Player):
+        if self._is_grounded(player):
+            self._set_slime_attribute(player, "vy", self.state.JUMP_FORCE)
+
+    def _apply_action(self, player: Player, action: ActionInput):
+        action = self._coerce_action(action)
+        direction_in_own_view = {
+            Action.LEFT: LEFT_DIRECTION,
+            Action.RIGHT: RIGHT_DIRECTION,
+        }.get(action, NO_DIRECTION)
+        self._steer_slime(player, direction_in_own_view * VIEW_MIRROR_SIGN_BY_PLAYER[player])
+        if action is Action.UP:
+            self._jump_slime(player)
+
     def move_player(self, direction: int):
-        new_x = self.state.player_x + direction * self.state.MOVEMENT_SPEED
-        if 0 <= new_x <= self.state.NET_X - self.state.PADDLE_RADIUS * 2:
-            self.state.player_x = new_x
+        self._steer_slime(Player.PLAYER_ONE, direction)
 
     def jump_player(self):
-        if self.state.player_y >= self.state.GROUND_Y - self.state.PADDLE_RADIUS:
-            self.state.player_vy = self.state.JUMP_FORCE
+        self._jump_slime(Player.PLAYER_ONE)
 
     def move_opponent(self, direction: int):
-        new_x = self.state.opponent_x + direction * self.state.MOVEMENT_SPEED
-        if (
-            self.state.NET_X + self.state.NET_WIDTH <= new_x
-            <= self.state.SCREEN_WIDTH - self.state.PADDLE_RADIUS * 2
-        ):
-            self.state.opponent_x = new_x
+        self._steer_slime(Player.PLAYER_TWO, direction)
 
     def jump_opponent(self):
-        if self.state.opponent_y >= self.state.GROUND_Y - self.state.PADDLE_RADIUS:
-            self.state.opponent_vy = self.state.JUMP_FORCE
-
-    def _play_player_action(self, action: ActionInput):
-        action = self._coerce_action(action)
-        if action is Action.LEFT:
-            self.move_player(-1)
-        elif action is Action.RIGHT:
-            self.move_player(1)
-        elif action is Action.UP:
-            self.jump_player()
-
-    def _play_opponent_action(self, action: ActionInput):
-        action = self._coerce_action(action)
-        if action is Action.LEFT:
-            self.move_opponent(-1)
-        elif action is Action.RIGHT:
-            self.move_opponent(1)
-        elif action is Action.UP:
-            self.jump_opponent()
+        self._jump_slime(Player.PLAYER_TWO)
 
     def step(self, player_one_action: ActionInput, player_two_action: ActionInput) -> StepResult:
-        self._play_player_action(player_one_action)
-        self._play_opponent_action(player_two_action)
-        events, done, winner = self._advance()
-        result = StepResult(self.get_states(), frozenset(events), done, winner)
-        self.last_result = result
-        return result
+        self._apply_action(Player.PLAYER_ONE, player_one_action)
+        self._apply_action(Player.PLAYER_TWO, player_two_action)
+        return self._advance()
 
     def play_step(self, player_action: ActionInput, opponent_action: ActionInput):
         return self.step(player_action, opponent_action)
 
-    def _advance(self):
+    def _advance(self) -> StepResult:
         self.update_paddle_physics()
-        return self._update_ball_physics()
+        events, done, winner = self._update_ball_physics()
+        self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
+        return self.last_result
 
     def update(self):
-        events, done, winner = self._advance()
-        self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
-        return frozenset(events), done, winner
+        result = self._advance()
+        return result.events, result.done, result.winner
 
     def update_paddle_physics(self):
-        ground_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
-        self.state.player_y += self.state.player_vy
-        self.state.player_vy += self.state.GRAVITY
-        if self.state.player_y > ground_y:
-            self.state.player_y = ground_y
-            self.state.player_vy = 0
+        for player in Player:
+            self._integrate_slime(player)
 
-        self.state.opponent_y += self.state.opponent_vy
-        self.state.opponent_vy += self.state.GRAVITY
-        if self.state.opponent_y > ground_y:
-            self.state.opponent_y = ground_y
-            self.state.opponent_vy = 0
+    def _integrate_slime(self, player: Player):
+        vertical_velocity = self._get_slime_attribute(player, "vy") + self.state.GRAVITY
+        top_y = self._get_slime_attribute(player, "y") + vertical_velocity
+        if top_y >= self.state.SLIME_GROUND_TOP_Y:
+            top_y = self.state.SLIME_GROUND_TOP_Y
+            vertical_velocity = 0.0
+        self._set_slime_attribute(player, "y", top_y)
+        self._set_slime_attribute(player, "vy", vertical_velocity)
+
+        horizontal_velocity = self._get_slime_attribute(player, "vx")
+        min_x, max_x = self._slime_x_bounds(player)
+        unclamped_x = self._get_slime_attribute(player, "x") + horizontal_velocity
+        left_x = clamp(unclamped_x, min_x, max_x)
+        if left_x != unclamped_x:
+            self._set_slime_attribute(player, "vx", 0.0)
+        self._set_slime_attribute(player, "x", left_x)
 
     def _ball_side(self) -> Player:
-        return Player.PLAYER_ONE if self.state.ball_x < self.state.NET_X else Player.PLAYER_TWO
+        if self.state.ball_x < self.state.NET_CENTER_X:
+            return Player.PLAYER_ONE
+        return Player.PLAYER_TWO
 
     def _update_ball_physics(self):
         events = set()
-        done = False
-        winner = None
         previous_side = self._ball_side()
 
+        self.state.ball_vy += self.state.GRAVITY
+        self._limit_ball_speed()
         self.state.ball_x += self.state.ball_vx
         self.state.ball_y += self.state.ball_vy
-        self.state.ball_vy += self.state.GRAVITY
 
-        if self.state.ball_x <= self.state.BALL_RADIUS or self.state.ball_x >= self.state.SCREEN_WIDTH - self.state.BALL_RADIUS:
-            self.state.ball_vx *= -1
-            self.state.ball_x = max(self.state.BALL_RADIUS, min(self.state.SCREEN_WIDTH - self.state.BALL_RADIUS, self.state.ball_x))
-
-        if self.state.ball_y <= self.state.BALL_RADIUS:
-            self.state.ball_vy *= -self.state.collision_coefficient
-            self.state.ball_y = self.state.BALL_RADIUS
+        for player in Player:
+            if self._collides_with_paddle(player):
+                events.add(HIT_EVENT_BY_PLAYER[player])
+        self._bounce_off_net()
+        self._bounce_off_walls_and_ceiling()
 
         current_side = self._ball_side()
         if current_side is not previous_side:
-            if current_side is Player.PLAYER_ONE:
-                events.add(GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE)
-            else:
-                events.add(GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE)
-        self._last_ball_side = current_side
+            events.add(CROSSING_EVENT_BY_DESTINATION[current_side])
 
-        if self.state.ball_y >= self.state.GROUND_Y - self.state.BALL_RADIUS:
-            self.state.ball_y = self.state.GROUND_Y - self.state.BALL_RADIUS
-            if current_side is Player.PLAYER_ONE:
-                winner = Player.PLAYER_TWO
-                self.state.opponent_score += 1
-                events.add(GameEvent.PLAYER_TWO_WON_ROUND)
-            else:
-                winner = Player.PLAYER_ONE
-                self.state.player_score += 1
-                events.add(GameEvent.PLAYER_ONE_WON_ROUND)
+        if self.state.ball_y < self.state.GROUND_Y - self.state.BALL_RADIUS:
+            return events, False, None
 
-            done = True
-            self.reset_paddle_positions()
-            self.reset_ball(winner)
-            return events, done, winner
+        self.state.ball_y = self.state.GROUND_Y - self.state.BALL_RADIUS
+        winner = Player.PLAYER_TWO if current_side is Player.PLAYER_ONE else Player.PLAYER_ONE
+        self._award_point(winner)
+        events.add(ROUND_WIN_EVENT_BY_PLAYER[winner])
+        self.reset_paddle_positions()
+        self.reset_ball(winner)
+        return events, True, winner
 
-        if (
-            self.state.NET_X - self.state.BALL_RADIUS <= self.state.ball_x <= self.state.NET_X + self.state.NET_WIDTH + self.state.BALL_RADIUS
-            and self.state.ball_y >= self.state.GROUND_Y - self.state.NET_HEIGHT - self.state.BALL_RADIUS
-        ):
-            self.state.ball_vx *= -1
-
-        if self._collides_with_paddle(Player.PLAYER_ONE):
-            events.add(GameEvent.PLAYER_ONE_HIT)
-
-        if self._collides_with_paddle(Player.PLAYER_TWO):
-            events.add(GameEvent.PLAYER_TWO_HIT)
-
-        return events, done, winner
+    def _award_point(self, winner: Player):
+        if winner is Player.PLAYER_ONE:
+            self.state.player_score += 1
+        else:
+            self.state.opponent_score += 1
 
     def update_ball_physics(self):
         events, done, winner = self._update_ball_physics()
         self.last_result = StepResult(self.get_states(), frozenset(events), done, winner)
         return frozenset(events), done, winner
 
-    def _collides_with_paddle(self, player: Player) -> bool:
-        if player is Player.PLAYER_ONE:
-            paddle_x, paddle_y, paddle_vy = self.state.player_x, self.state.player_y, self.state.player_vy
+    def _limit_ball_speed(self):
+        speed = math.hypot(self.state.ball_vx, self.state.ball_vy)
+        if speed > self.state.BALL_MAX_SPEED:
+            scale = self.state.BALL_MAX_SPEED / speed
+            self.state.ball_vx *= scale
+            self.state.ball_vy *= scale
+
+    def _bounce_off_walls_and_ceiling(self):
+        radius = self.state.BALL_RADIUS
+        if self.state.ball_x < radius:
+            self.state.ball_x = radius
+            self.state.ball_vx = abs(self.state.ball_vx)
+        elif self.state.ball_x > self.state.SCREEN_WIDTH - radius:
+            self.state.ball_x = self.state.SCREEN_WIDTH - radius
+            self.state.ball_vx = -abs(self.state.ball_vx)
+        if self.state.ball_y < radius:
+            self.state.ball_y = radius
+            self.state.ball_vy = abs(self.state.ball_vy)
+
+    def _slime_contact(self, center_x: float, center_y: float) -> Optional[Contact]:
+        slime_radius = self.state.PADDLE_RADIUS
+        ball_radius = self.state.BALL_RADIUS
+        ball_is_above_slime_base = self.state.ball_y <= center_y
+        if ball_is_above_slime_base:
+            anchor_x, anchor_y = center_x, center_y
+            contact_reach = slime_radius + ball_radius
         else:
-            paddle_x, paddle_y, paddle_vy = self.state.opponent_x, self.state.opponent_y, self.state.opponent_vy
+            anchor_x = clamp(self.state.ball_x, center_x - slime_radius, center_x + slime_radius)
+            anchor_y = center_y
+            contact_reach = ball_radius
+        return self._circle_contact(anchor_x, anchor_y, contact_reach, ball_is_above_slime_base)
 
-        center_x = paddle_x + self.state.PADDLE_RADIUS
-        center_y = paddle_y + self.state.PADDLE_RADIUS
-        distance = math.hypot(self.state.ball_x - center_x, self.state.ball_y - center_y)
-        collision_radius = (self.state.PADDLE_RADIUS + self.state.BALL_RADIUS) * (1 + self.state.collision_margin)
-        if distance > collision_radius or self.state.ball_y > center_y:
-            return False
+    def _net_contact(self) -> Optional[Contact]:
+        net_left = self.state.NET_X
+        net_right = self.state.NET_X + self.state.NET_WIDTH
+        net_top = self.state.GROUND_Y - self.state.NET_HEIGHT
+        closest_x = clamp(self.state.ball_x, net_left, net_right)
+        closest_y = clamp(self.state.ball_y, net_top, self.state.GROUND_Y)
+        ball_is_above_net = self.state.ball_y <= net_top
+        if closest_x == self.state.ball_x and closest_y == self.state.ball_y:
+            return self._contact_from_inside_net(net_left, net_right, net_top)
+        return self._circle_contact(closest_x, closest_y, self.state.BALL_RADIUS, ball_is_above_net)
 
-        distance_vector = (center_x - self.state.ball_x, center_y - self.state.ball_y)
-        relative_velocity = (self.state.ball_vx, self.state.ball_vy - paddle_vy)
-        if distance_vector[0] * relative_velocity[0] + distance_vector[1] * relative_velocity[1] <= 0:
-            return False
+    def _contact_from_inside_net(self, net_left: float, net_right: float, net_top: float) -> Contact:
+        radius = self.state.BALL_RADIUS
+        exit_distances = {
+            (0.0, -1.0): self.state.ball_y - net_top + radius,
+            (-1.0, 0.0): self.state.ball_x - net_left + radius,
+            (1.0, 0.0): net_right - self.state.ball_x + radius,
+        }
+        (normal_x, normal_y), penetration = min(exit_distances.items(), key=lambda item: item[1])
+        return Contact(normal_x, normal_y, penetration)
 
+    def _circle_contact(
+        self, anchor_x: float, anchor_y: float, contact_reach: float, push_upward_when_centered: bool
+    ) -> Optional[Contact]:
+        offset_x = self.state.ball_x - anchor_x
+        offset_y = self.state.ball_y - anchor_y
+        distance = math.hypot(offset_x, offset_y)
+        if distance >= contact_reach:
+            return None
         if distance == 0:
-            normal_x, normal_y = (1.0, -1.0 / math.sqrt(2))
-        else:
-            normal_x = (self.state.ball_x - center_x) / distance
-            normal_y = (self.state.ball_y - center_y) / distance
-        collision_distance = self.state.PADDLE_RADIUS + self.state.BALL_RADIUS
-        self.state.ball_x = center_x + normal_x * collision_distance
-        self.state.ball_y = center_y + normal_y * collision_distance
-        self.state.ball_vx, self.state.ball_vy = self.calculate_ball_velocity_after_collision(
-            center_x, center_y, self.state.ball_x, self.state.ball_y,
-            self.state.ball_vx, self.state.ball_vy, 0, paddle_vy,
-        )
+            return Contact(0.0, -1.0 if push_upward_when_centered else 1.0, contact_reach)
+        return Contact(offset_x / distance, offset_y / distance, contact_reach - distance)
+
+    def _resolve_ball_contact(self, contact: Contact, surface_vx: float, surface_vy: float) -> bool:
+        self.state.ball_x += contact.normal_x * contact.penetration
+        self.state.ball_y += contact.normal_y * contact.penetration
+        relative_vx = self.state.ball_vx - surface_vx
+        relative_vy = self.state.ball_vy - surface_vy
+        approach_speed = relative_vx * contact.normal_x + relative_vy * contact.normal_y
+        if approach_speed >= 0:
+            return False
+        rebound_impulse = (1 + self.state.collision_coefficient) * approach_speed
+        self.state.ball_vx = relative_vx - rebound_impulse * contact.normal_x + surface_vx
+        self.state.ball_vy = relative_vy - rebound_impulse * contact.normal_y + surface_vy
+        self._limit_ball_speed()
         return True
 
-    def calculate_ball_velocity_after_collision(self, paddle_x, paddle_y, ball_x, ball_y, ball_vx, ball_vy, paddle_vx, paddle_vy):
-        distance_vector = (paddle_x - ball_x, paddle_y - ball_y)
-        v_ref = (ball_vx - paddle_vx, ball_vy - paddle_vy)
-        denominator = distance_vector[0] ** 2 + distance_vector[1] ** 2
-        if denominator == 0:
-            return ball_vx, -abs(ball_vy)
-        dot_product = distance_vector[0] * v_ref[0] + distance_vector[1] * v_ref[1]
-        new_velocity = (
-            v_ref[0] - 2 * (dot_product / denominator) * distance_vector[0] + paddle_vx,
-            v_ref[1] - 2 * (dot_product / denominator) * distance_vector[1] + paddle_vy,
+    def _collides_with_paddle(self, player: Player) -> bool:
+        contact = self._slime_contact(*self._slime_center(player))
+        if contact is None:
+            return False
+        return self._resolve_ball_contact(
+            contact,
+            self._get_slime_attribute(player, "vx"),
+            self._get_slime_attribute(player, "vy"),
         )
-        new_velocity = tuple(value * self.state.collision_coefficient for value in new_velocity)
-        magnitude = math.hypot(*new_velocity)
-        if magnitude > self.state.BALL_MAX_SPEED:
-            scale = self.state.BALL_MAX_SPEED / magnitude
-            new_velocity = (new_velocity[0] * scale, new_velocity[1] * scale)
-        return new_velocity
+
+    def _bounce_off_net(self) -> bool:
+        contact = self._net_contact()
+        if contact is None:
+            return False
+        return self._resolve_ball_contact(contact, 0.0, 0.0)
 
     def get_state(self, player: Union[Player, str] = Player.PLAYER_ONE) -> List[float]:
         player = self._coerce_player(player)
@@ -396,11 +524,11 @@ class SlimeVolleyball:
         if player is Player.PLAYER_ONE:
             return values
 
-        radius = self.state.PADDLE_RADIUS
+        diameter = 2 * self.state.PADDLE_RADIUS
         return [
             self.state.SCREEN_WIDTH - self.state.ball_x, self.state.ball_y, -self.state.ball_vx, self.state.ball_vy,
-            self.state.SCREEN_WIDTH - self.state.opponent_x - 2 * radius, self.state.opponent_y, self.state.opponent_vy,
-            self.state.SCREEN_WIDTH - self.state.player_x - 2 * radius, self.state.player_y, self.state.player_vy,
+            self.state.SCREEN_WIDTH - self.state.opponent_x - diameter, self.state.opponent_y, self.state.opponent_vy,
+            self.state.SCREEN_WIDTH - self.state.player_x - diameter, self.state.player_y, self.state.player_vy,
         ]
 
     def get_states(self) -> Dict[str, List[float]]:
@@ -409,23 +537,23 @@ class SlimeVolleyball:
             Player.PLAYER_TWO.value: self.get_state(Player.PLAYER_TWO),
         }
 
+    @staticmethod
+    def _held_direction(keys, left_key, right_key) -> int:
+        return (RIGHT_DIRECTION if keys[right_key] else NO_DIRECTION) + (
+            LEFT_DIRECTION if keys[left_key] else NO_DIRECTION
+        )
+
     def handle_input(self, control_opponent: bool = True):
         if pygame is None:
             raise RuntimeError("pygame is required for keyboard input")
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.move_player(-1)
-        if keys[pygame.K_d]:
-            self.move_player(1)
+        self._steer_slime(Player.PLAYER_ONE, self._held_direction(keys, pygame.K_a, pygame.K_d))
         if keys[pygame.K_w]:
-            self.jump_player()
+            self._jump_slime(Player.PLAYER_ONE)
         if control_opponent:
-            if keys[pygame.K_LEFT]:
-                self.move_opponent(-1)
-            if keys[pygame.K_RIGHT]:
-                self.move_opponent(1)
+            self._steer_slime(Player.PLAYER_TWO, self._held_direction(keys, pygame.K_LEFT, pygame.K_RIGHT))
             if keys[pygame.K_UP]:
-                self.jump_opponent()
+                self._jump_slime(Player.PLAYER_TWO)
         if keys[pygame.K_r]:
             self.reset_ball(Player.PLAYER_ONE)
 
@@ -440,6 +568,14 @@ class SlimeVolleyball:
             action_index = action_index.item()
         return list(Action)[int(action_index)]
 
+    def _quit_requested(self) -> bool:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return True
+        return False
+
     def play_against_agent(self, agent):
         if pygame is None:
             raise RuntimeError("pygame is required to play against an agent")
@@ -448,20 +584,13 @@ class SlimeVolleyball:
         agent.model.eval()
         self.running = True
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.running = False
-
+            self.running = not self._quit_requested()
             self.handle_input(control_opponent=False)
-            ai_action = self._agent_action(
-                agent,
-                self.get_state(Player.PLAYER_TWO),
-            )
-            self.step(Action.NOTHING, ai_action)
+            ai_action = self._agent_action(agent, self.get_state(Player.PLAYER_TWO))
+            self._apply_action(Player.PLAYER_TWO, ai_action)
+            self.update()
             self.render()
-            self.clock.tick(60)
+            self.clock.tick(FRAMES_PER_SECOND)
         pygame.quit()
 
     def play_against_champion(self, champion_path=None):
@@ -477,14 +606,6 @@ class SlimeVolleyball:
             from agent_genetic import GeneticAgent
         champion = GeneticAgent.load_model(champion_path)
         self.play_against_agent(champion)
-
-    def reset_paddle_positions(self):
-        self.state.player_x = self.state.SCREEN_WIDTH / 4 - self.state.PADDLE_RADIUS
-        self.state.player_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
-        self.state.player_vy = 0
-        self.state.opponent_x = self.state.SCREEN_WIDTH * 3 / 4 - self.state.PADDLE_RADIUS
-        self.state.opponent_y = self.state.GROUND_Y - self.state.PADDLE_RADIUS
-        self.state.opponent_vy = 0
 
     def draw_semicircle(self, surface, color, center, radius, top_half=True):
         temp_surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
@@ -506,7 +627,16 @@ class SlimeVolleyball:
         pupil_x = eye_x + math.cos(angle) * pupil_offset
         pupil_y = eye_y + math.sin(angle) * pupil_offset
         pygame.draw.circle(surface, eye_color, (int(pupil_x), int(pupil_y)), int(eye_radius * 0.6))
-        pygame.draw.circle(surface, eye_color, (int(eye_x), int(eye_y)), int(eye_radius), 2)
+        pygame.draw.circle(surface, eye_color, (int(eye_x), int(eye_y)), int(eye_radius), 1)
+
+    def _draw_slime(self, player: Player, color, which_paddle: str):
+        center_x, center_y = self._slime_center(player)
+        center = (int(center_x), int(center_y))
+        radius = int(self.state.PADDLE_RADIUS)
+        self.draw_semicircle(self.screen, color, center, radius, True)
+        self.draw_paddle_eyes(
+            self.screen, center, radius, self.BLACK, self.state.ball_x, self.state.ball_y, which_paddle
+        )
 
     def render(self):
         if pygame is None:
@@ -514,16 +644,30 @@ class SlimeVolleyball:
         if self.screen is None:
             self._initialize_renderer()
         self.screen.fill(self.BLACK)
-        pygame.draw.rect(self.screen, self.GREEN, (0, self.state.GROUND_Y, self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT - self.state.GROUND_Y))
-        pygame.draw.rect(self.screen, self.WHITE, (self.state.NET_X, self.state.GROUND_Y - self.state.NET_HEIGHT, self.state.NET_WIDTH, self.state.NET_HEIGHT))
-        self.draw_semicircle(self.screen, self.BLUE, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
-        self.draw_semicircle(self.screen, self.RED, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, True)
-        self.draw_paddle_eyes(self.screen, (int(self.state.player_x + self.state.PADDLE_RADIUS), int(self.state.player_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "player")
-        self.draw_paddle_eyes(self.screen, (int(self.state.opponent_x + self.state.PADDLE_RADIUS), int(self.state.opponent_y + self.state.PADDLE_RADIUS)), self.state.PADDLE_RADIUS, self.BLACK, self.state.ball_x, self.state.ball_y, "opponent")
-        pygame.draw.circle(self.screen, self.WHITE, (int(self.state.ball_x), int(self.state.ball_y)), self.state.BALL_RADIUS)
-        font = pygame.font.Font(None, 36)
-        self.screen.blit(font.render(f"Player: {self.state.player_score}", True, self.BLUE), (10, 10))
-        self.screen.blit(font.render(f"Opponent: {self.state.opponent_score}", True, self.RED), (self.state.SCREEN_WIDTH - 150, 10))
+        pygame.draw.rect(
+            self.screen,
+            self.GREEN,
+            (0, self.state.GROUND_Y, self.state.SCREEN_WIDTH, self.state.SCREEN_HEIGHT - self.state.GROUND_Y),
+        )
+        pygame.draw.rect(
+            self.screen,
+            self.WHITE,
+            (self.state.NET_X, self.state.GROUND_Y - self.state.NET_HEIGHT, self.state.NET_WIDTH, self.state.NET_HEIGHT),
+        )
+        self._draw_slime(Player.PLAYER_ONE, self.BLUE, "player")
+        self._draw_slime(Player.PLAYER_TWO, self.RED, "opponent")
+        pygame.draw.circle(
+            self.screen, self.WHITE, (int(self.state.ball_x), int(self.state.ball_y)), int(self.state.BALL_RADIUS)
+        )
+        self.screen.blit(
+            self.score_font.render(f"Player: {self.state.player_score}", True, self.BLUE),
+            (SCORE_MARGIN_PIXELS, SCORE_MARGIN_PIXELS),
+        )
+        opponent_score_text = self.score_font.render(f"Opponent: {self.state.opponent_score}", True, self.RED)
+        self.screen.blit(
+            opponent_score_text,
+            (self.state.SCREEN_WIDTH - opponent_score_text.get_width() - SCORE_MARGIN_PIXELS, SCORE_MARGIN_PIXELS),
+        )
         pygame.display.flip()
 
     def run(self, manual_control=True):
@@ -532,16 +676,12 @@ class SlimeVolleyball:
         if self.screen is None:
             self._initialize_renderer()
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    self.running = False
+            self.running = not self._quit_requested()
             if manual_control:
                 self.handle_input()
             self.update()
             self.render()
-            self.clock.tick(60)
+            self.clock.tick(FRAMES_PER_SECOND)
         pygame.quit()
 
 

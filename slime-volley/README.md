@@ -19,6 +19,16 @@ This project implements a two-player Slime Volleyball game with AI agents that l
 - **Controls**: Move left/right, jump, or stay still (4 possible actions)
 - **Objective**: Hit the ball over the net to score on the opponent's side
 - **Physics**: Realistic ball bouncing, paddle collisions, and gravity effects
+- **Proportions**: Sizes and speeds follow the `slimevolleygym` reference
+  (48-unit-wide arena, slime radius 1.5, ball radius 0.5, net 1 wide and 3.5
+  tall, gravity 29.4, jump speed 13.5, run speed 17.5, ball speed cap 22.5).
+  They are defined in world units at the top of `game.py` and converted to
+  pixels per frame at 60 FPS.
+- **Slimes**: Half-disc bodies. The dome and the flat underside both collide
+  with the ball, and the slime's horizontal and vertical velocity is transferred
+  into the ball, so running into the ball pushes it.
+- **Net**: A solid post. The ball bounces off its sides and its top.
+- **Serve**: The ball drops from above the slime that won the previous point.
 - **Scoring**: Points awarded when the ball lands on the opponent's side
 
 ## Project Structure
@@ -40,6 +50,10 @@ slime-volley/
 - `Action`: Enum containing `LEFT`, `RIGHT`, `UP`, and `NOTHING`
 - `SlimeVolleyball.reset()`: Initializes a game and returns observations for both models
 - `SlimeVolleyball.step(player_one_action, player_two_action)`: Applies both actions and returns a `StepResult` containing the next states, emitted `GameEvent`s, `done`, and the round winner
+- Player two's observation is mirrored so it always sees itself on the left,
+  and its `LEFT`/`RIGHT` actions are mirrored the same way. One policy can play
+  either side: `RIGHT` always means "toward the net".
+- `SlimeVolleyball.reset(server=Player.PLAYER_ONE)` chooses who serves first.
 - Features realistic paddle-ball collisions using physics-based calculations
 - Visual elements include animated eyes that track the ball position
 
@@ -177,6 +191,10 @@ This runs the game in manual control mode:
 - **ESC**: Exit game
 
 ### Play Against the Genetic Champion
+
+Each generation, training also overwrites `champions/top_agents/` with the
+five highest-rated agents (`rank_<n>_gen_<generation>_rating_<rating>.pth`).
+Any of them can be loaded with `GeneticAgent.load_model`.
 
 After training has created the champion checkpoint, run:
 

@@ -1,6 +1,7 @@
 import copy
 import math
 import multiprocessing as mp
+import os
 import random
 from collections import deque
 from dataclasses import dataclass
@@ -14,7 +15,9 @@ from .agent_genetic import INITIAL_RATING, GeneticAgent
 from .game import Action, GameEvent, Player, SlimeVolleyball
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
-NUM_WORKERS = 8
+TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
+TOP_AGENT_COUNT = 5
+NUM_WORKERS = os.cpu_count() or 1
 EVALUATION_TASKS_PER_WORKER = 3
 
 FIRST_HIT_REWARD = 2.0
@@ -22,7 +25,7 @@ HIT_REWARD_DECAY = 0.5
 CROSSING_REWARD = 4.0
 ROUND_WIN_REWARD = 100.0
 
-SERVE_SIDEWAYS_JITTER = 1.5
+SERVE_SIDEWAYS_JITTER = 0.5
 
 BOOTSTRAP_ANCHOR_COUNT = 5
 POOL_MEMBERS_PER_GENERATION = 5
@@ -342,6 +345,17 @@ def _ladder_report(
     return " | ".join(rung_summaries)
 
 
+def save_top_agents(ranked_population: List[GeneticAgent], generation: int, directory=TOP_AGENTS_DIRECTORY) -> List[Path]:
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    for stale_checkpoint in directory.glob("rank_*.pth"):
+        stale_checkpoint.unlink()
+    return [
+        agent.save_model(directory / f"rank_{rank}_gen_{generation}_rating_{agent.rating:.0f}.pth")
+        for rank, agent in enumerate(ranked_population[:TOP_AGENT_COUNT], start=1)
+    ]
+
+
 def _next_generation(
     ranked_population: List[GeneticAgent],
     population_size: int,
@@ -367,6 +381,7 @@ def train(
     entry_games_per_opponent: int = 6,
     use_shaped_rewards: bool = True,
     champion_path=CHAMPION_PATH,
+    top_agents_directory=TOP_AGENTS_DIRECTORY,
 ) -> GeneticAgent:
     if generations < 1:
         raise ValueError("generations must be at least 1")
@@ -413,6 +428,7 @@ def train(
 
             champion = copy.deepcopy(population[0])
             saved_path = champion.save_model(champion_path)
+            save_top_agents(population, generation, top_agents_directory)
             print(
                 f"Generation {generation}: champion rating {champion.rating:.0f} "
                 f"against {len(opponents)} opponents. Saved to {saved_path}"
