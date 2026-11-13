@@ -1,1 +1,3 @@
 __pycache__/
+champions/training_state.pth
+champions/training_state.partial

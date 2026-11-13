@@ -196,6 +196,14 @@ Each generation, training also overwrites `champions/top_agents/` with the
 five highest-rated agents (`rank_<n>_gen_<generation>_rating_<rating>.pth`).
 Any of them can be loaded with `GeneticAgent.load_model`.
 
+After every generation the full training state (population, opponent pool,
+ladder and ratings) is written to `champions/training_state.pth`, which is not
+committed. To continue an interrupted run, pass `resume=True` to `train()` (or
+`--resume` on the command line). To start a new run from saved top agents, pass
+`seed_agents_directory=` (or `--seed-from champions/top_agents`): the population
+is the top agents plus mutated copies of them, the generation count continues
+from theirs, and they enter the opponent pool with their saved ratings.
+
 After training has created the champion checkpoint, run:
 
 ```bash

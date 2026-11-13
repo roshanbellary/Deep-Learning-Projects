@@ -63,6 +63,12 @@ class BaseAgentModel(nn.Module):
 _agent_id_counter = itertools.count()
 
 
+def reserve_agent_ids_through(highest_used_agent_id: int):
+    global _agent_id_counter
+    next_free_agent_id = max(next(_agent_id_counter), highest_used_agent_id + 1)
+    _agent_id_counter = itertools.count(next_free_agent_id)
+
+
 class GeneticAgent:
     def __init__(self, model: BaseAgentModel | None = None):
         self.model: BaseAgentModel = model if model is not None else BaseAgentModel()

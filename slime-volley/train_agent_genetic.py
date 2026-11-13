@@ -1,22 +1,26 @@
+import argparse
 import copy
 import math
 import multiprocessing as mp
 import os
 import random
+import re
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Deque, Dict, List, Optional, Sequence, Tuple
 
 import torch
 from tqdm import tqdm
 
-from .agent_genetic import INITIAL_RATING, GeneticAgent
+from .agent_genetic import INITIAL_RATING, GeneticAgent, reserve_agent_ids_through
 from .game import Action, GameEvent, Player, SlimeVolleyball
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
 TOP_AGENT_COUNT = 5
+TOP_AGENT_FILENAME_PATTERN = re.compile(r"rank_(?P<rank>\d+)_gen_(?P<generation>\d+)_rating_(?P<rating>\d+)\.pth")
+TRAINING_STATE_PATH = Path(__file__).resolve().parent / "champions" / "training_state.pth"
 NUM_WORKERS = os.cpu_count() or 1
 EVALUATION_TASKS_PER_WORKER = 3
 
@@ -356,6 +360,116 @@ def save_top_agents(ranked_population: List[GeneticAgent], generation: int, dire
     ]
 
 
+@dataclass
+class TrainingProgress:
+    completed_generation: int
+    population: List[GeneticAgent]
+    recent_generations: Deque[List[FrozenOpponent]]
+    ladder: List[FrozenOpponent]
+
+
+def _fresh_progress(population_size: int) -> TrainingProgress:
+    return TrainingProgress(
+        completed_generation=0,
+        population=[GeneticAgent() for _ in range(population_size)],
+        recent_generations=deque(maxlen=POOL_GENERATION_WINDOW),
+        ladder=[],
+    )
+
+
+def _restore_agent(agent_id: int, rating: float, weights: Dict[str, torch.Tensor]) -> GeneticAgent:
+    agent = GeneticAgent.from_weights(weights)
+    agent.agent_id = agent_id
+    agent.rating = rating
+    return agent
+
+
+def save_training_state(progress: TrainingProgress, path=TRAINING_STATE_PATH) -> Path:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    serialized_state = {
+        "completed_generation": progress.completed_generation,
+        "population": [
+            {"agent_id": agent.agent_id, "rating": agent.rating, "weights": agent.weights()}
+            for agent in progress.population
+        ],
+        "recent_generations": [
+            [asdict(opponent) for opponent in generation_members]
+            for generation_members in progress.recent_generations
+        ],
+        "ladder": [asdict(rung) for rung in progress.ladder],
+    }
+    partially_written_path = path.with_suffix(".partial")
+    torch.save(serialized_state, partially_written_path)
+    os.replace(partially_written_path, path)
+    return path
+
+
+def load_training_state(path=TRAINING_STATE_PATH) -> TrainingProgress:
+    serialized_state = torch.load(path, map_location="cpu")
+    progress = TrainingProgress(
+        completed_generation=serialized_state["completed_generation"],
+        population=[_restore_agent(**agent_fields) for agent_fields in serialized_state["population"]],
+        recent_generations=deque(
+            (
+                [FrozenOpponent(**opponent_fields) for opponent_fields in generation_members]
+                for generation_members in serialized_state["recent_generations"]
+            ),
+            maxlen=POOL_GENERATION_WINDOW,
+        ),
+        ladder=[FrozenOpponent(**rung_fields) for rung_fields in serialized_state["ladder"]],
+    )
+    _reserve_ids_used_by(progress)
+    return progress
+
+
+def _reserve_ids_used_by(progress: TrainingProgress):
+    used_agent_ids = [agent.agent_id for agent in progress.population]
+    used_agent_ids += [opponent.agent_id for members in progress.recent_generations for opponent in members]
+    used_agent_ids += [rung.agent_id for rung in progress.ladder]
+    reserve_agent_ids_through(max(used_agent_ids))
+
+
+def load_top_agents(directory=TOP_AGENTS_DIRECTORY) -> Tuple[List[GeneticAgent], int]:
+    ranked_checkpoints = []
+    for checkpoint_path in Path(directory).glob("rank_*.pth"):
+        filename_match = TOP_AGENT_FILENAME_PATTERN.fullmatch(checkpoint_path.name)
+        if filename_match:
+            ranked_checkpoints.append((int(filename_match["rank"]), filename_match, checkpoint_path))
+    if not ranked_checkpoints:
+        raise FileNotFoundError(f"No rank_*_gen_*_rating_*.pth checkpoints in {directory}")
+    ranked_checkpoints.sort(key=lambda checkpoint: checkpoint[0])
+
+    top_agents = []
+    for _, filename_match, checkpoint_path in ranked_checkpoints:
+        agent = GeneticAgent.load_model(checkpoint_path)
+        agent.rating = float(filename_match["rating"])
+        top_agents.append(agent)
+    saved_generation = max(int(filename_match["generation"]) for _, filename_match, _ in ranked_checkpoints)
+    return top_agents, saved_generation
+
+
+def seed_progress_from_top_agents(
+    population_size: int,
+    mutation_std: float,
+    directory=TOP_AGENTS_DIRECTORY,
+) -> TrainingProgress:
+    seed_agents, saved_generation = load_top_agents(directory)
+    mutated_children = [
+        random.choice(seed_agents).mutate(mutation_std)
+        for _ in range(population_size - len(seed_agents))
+    ]
+    return TrainingProgress(
+        completed_generation=saved_generation,
+        population=seed_agents + mutated_children,
+        recent_generations=deque(
+            [[_freeze(agent, saved_generation) for agent in seed_agents]],
+            maxlen=POOL_GENERATION_WINDOW,
+        ),
+        ladder=[],
+    )
+
+
 def _next_generation(
     ranked_population: List[GeneticAgent],
     population_size: int,
@@ -382,6 +496,9 @@ def train(
     use_shaped_rewards: bool = True,
     champion_path=CHAMPION_PATH,
     top_agents_directory=TOP_AGENTS_DIRECTORY,
+    training_state_path=TRAINING_STATE_PATH,
+    resume: bool = False,
+    seed_agents_directory=None,
 ) -> GeneticAgent:
     if generations < 1:
         raise ValueError("generations must be at least 1")
@@ -391,15 +508,26 @@ def train(
         raise ValueError("survival_rate must be greater than 0 and at most 1")
     if games_per_opponent < 1 or entry_games_per_opponent < 1:
         raise ValueError("games per opponent must be at least 1")
+    if resume and seed_agents_directory is not None:
+        raise ValueError("choose either resume or seed_agents_directory, not both")
 
-    population = [GeneticAgent() for _ in range(population_size)]
-    recent_generations: Deque[List[FrozenOpponent]] = deque(maxlen=POOL_GENERATION_WINDOW)
-    ladder: List[FrozenOpponent] = []
+    if resume:
+        progress = load_training_state(training_state_path)
+    elif seed_agents_directory is not None:
+        progress = seed_progress_from_top_agents(population_size, mutation_std, seed_agents_directory)
+    else:
+        progress = _fresh_progress(population_size)
+    population = progress.population
+    recent_generations = progress.recent_generations
+    ladder = progress.ladder
     champion: Optional[GeneticAgent] = None
 
     multiprocessing_context = mp.get_context("spawn")
     with multiprocessing_context.Pool(processes=NUM_WORKERS) as worker_pool:
-        for generation in tqdm(range(1, generations + 1), unit="generation"):
+        for generation in tqdm(
+            range(progress.completed_generation + 1, generations + 1),
+            unit="generation",
+        ):
             opponents = _build_opponent_pool(recent_generations, ladder) or _bootstrap_anchors()
 
             records_by_agent_id = _rate_against_opponents(
@@ -442,9 +570,29 @@ def train(
                 ladder = _add_ladder_rung(ladder, _freeze(champion, generation))
 
             population = _next_generation(population, population_size, survival_rate, mutation_std)
+            save_training_state(
+                TrainingProgress(generation, population, recent_generations, ladder),
+                training_state_path,
+            )
 
     return champion
 
 
+def _parse_command_line() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Evolve slime volleyball agents.")
+    parser.add_argument("--generations", type=int, default=100)
+    parser.add_argument("--population-size", type=int, default=100)
+    starting_point = parser.add_mutually_exclusive_group()
+    starting_point.add_argument("--resume", action="store_true")
+    starting_point.add_argument("--seed-from", type=Path, default=None)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    train()
+    command_line = _parse_command_line()
+    train(
+        generations=command_line.generations,
+        population_size=command_line.population_size,
+        resume=command_line.resume,
+        seed_agents_directory=command_line.seed_from,
+    )
