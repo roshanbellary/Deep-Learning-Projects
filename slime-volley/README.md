@@ -104,8 +104,10 @@ change:
 Ratings come from `performance_rating`: the single rating whose expected score
 against the opponents equals the actual score. It does not depend on game
 order, and a virtual draw against the average opponent keeps perfect records
-finite. Agents entering the pool are re-rated with extra games
-(`entry_games_per_opponent`) before their rating is frozen.
+finite. After the first pass, the top `finalist_count` agents (default 20) are
+re-rated with `finalist_games_per_opponent` games (default 8) per opponent.
+Survivors, the champion, and pool entrants are all chosen from these
+finalists, so selection is not decided by two lucky games.
 
 Round winners are decided by the event reward totals. Training serves with a
 small random sideways velocity (`SERVE_SIDEWAYS_JITTER`), because the game and
@@ -114,8 +116,34 @@ Each generation logs the champion's win rate against the oldest and newest
 ladder rungs next to the win rate its rating predicts. A large gap means the
 rating scale has drifted.
 
+### Measuring improvement: the ladder round robin
+
+Ratings during training are measured against a moving opponent pool, so a flat
+rating curve does not prove the agents stopped improving. To measure progress
+directly, the champion of every 10th generation (and of the final generation)
+is saved to `champions/ladder/gen_<generation>.pth`. When training finishes,
+these rungs play a round robin against each other and against a fixed-seed
+random agent. Each pair plays `ladder_games_per_pair` games (default 20) with
+sides alternating and no shaped rewards.
+
+Elo ratings are fitted to all of those results at once (a Bradley-Terry
+maximum-likelihood fit, with one virtual draw per pair to keep perfect records
+finite). The random agent is pinned at `1000`, so the numbers are comparable
+across runs. Results are printed and written to
+`champions/ladder/ladder_elo.csv`. If there are more than 25 rungs, an evenly
+spaced subset is used, always including the first and the last.
+
+To rate the saved ladder while training is still running, or after it stops
+early, run the module with `--rate-ladder`.
+
+Starting a new training run clears `champions/ladder/`; resuming keeps it.
+
 The top `survival_rate` fraction survives unchanged, and the rest of the
 population is refilled with mutated children of survivors.
+
+Each observation has 12 values: ball x, y, vx, vy, then x, y, vx, vy for the
+agent's own slime, then the same four for the opponent. Player two's view is
+mirrored, including the sign of horizontal velocities.
 
 Observations are normalized inside `GeneticAgent.move` so positions and
 velocities fall roughly in `[-1, 1]`; raw pixel values saturate the network.

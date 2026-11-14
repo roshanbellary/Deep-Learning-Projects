@@ -9,7 +9,7 @@ class QNet(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten()
         self.stack = nn.Sequential(
-            nn.Linear(10, 256),
+            nn.Linear(12, 256),
             nn.ReLU(),
             nn.Linear(256, 256),
             nn.ReLU(),

@@ -1,5 +1,7 @@
 import argparse
 import copy
+import csv
+import itertools
 import math
 import multiprocessing as mp
 import os
@@ -18,6 +20,8 @@ from .game import Action, GameEvent, Player, SlimeVolleyball
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
+LADDER_DIRECTORY = Path(__file__).resolve().parent / "champions" / "ladder"
+LADDER_RESULTS_FILENAME = "ladder_elo.csv"
 TOP_AGENT_COUNT = 5
 TOP_AGENT_FILENAME_PATTERN = re.compile(r"rank_(?P<rank>\d+)_gen_(?P<generation>\d+)_rating_(?P<rating>\d+)\.pth")
 TRAINING_STATE_PATH = Path(__file__).resolve().parent / "champions" / "training_state.pth"
@@ -36,6 +40,15 @@ POOL_MEMBERS_PER_GENERATION = 5
 POOL_GENERATION_WINDOW = 5
 LADDER_INTERVAL = 10
 LADDER_MAX_RUNGS = 10
+
+LADDER_ROUND_ROBIN_GAMES_PER_PAIR = 20
+LADDER_ROUND_ROBIN_MAX_PLAYERS = 25
+RANDOM_ANCHOR_GENERATION = 0
+RANDOM_ANCHOR_SEED = 0
+BRADLEY_TERRY_PRIOR_DRAWS = 1
+BRADLEY_TERRY_MAX_ITERATIONS = 1000
+BRADLEY_TERRY_TOLERANCE = 1e-9
+ELO_SCALE = 400.0
 
 RATING_SEARCH_FLOOR = 0.0
 RATING_SEARCH_CEILING = 4000.0
@@ -349,6 +362,156 @@ def _ladder_report(
     return " | ".join(rung_summaries)
 
 
+def _ladder_checkpoint_path(directory, generation: int) -> Path:
+    return Path(directory) / f"gen_{generation:05d}.pth"
+
+
+def _clear_ladder_checkpoints(directory) -> None:
+    for stale_checkpoint in Path(directory).glob("gen_*.pth"):
+        stale_checkpoint.unlink()
+
+
+def _load_ladder_checkpoints(directory) -> List[Tuple[int, Dict[str, torch.Tensor]]]:
+    return [
+        (int(checkpoint.stem.split("_")[1]), torch.load(checkpoint, map_location="cpu"))
+        for checkpoint in sorted(Path(directory).glob("gen_*.pth"))
+    ]
+
+
+def _seeded_random_agent_weights() -> Dict[str, torch.Tensor]:
+    with torch.random.fork_rng():
+        torch.manual_seed(RANDOM_ANCHOR_SEED)
+        return GeneticAgent().weights()
+
+
+def _evenly_spaced(items: List, max_count: int) -> List:
+    if len(items) <= max_count:
+        return items
+    chosen_indices = sorted({round(slot * (len(items) - 1) / (max_count - 1)) for slot in range(max_count)})
+    return [items[index] for index in chosen_indices]
+
+
+def _play_ladder_pair_worker(pair_task):
+    first_index, second_index, first_weights, second_weights, games, max_steps_per_round = pair_task
+    torch.set_num_threads(1)
+    results = play_match(
+        GeneticAgent.from_weights(first_weights),
+        GeneticAgent.from_weights(second_weights),
+        games=games,
+        max_steps_per_round=max_steps_per_round,
+        use_shaped_rewards=False,
+    )
+    return first_index, second_index, results
+
+
+def fit_elo_ratings(
+    player_count: int,
+    pair_results: Dict[Tuple[int, int], Sequence[float]],
+    anchor_index: int = 0,
+) -> List[float]:
+    points_against = [[0.0] * player_count for _ in range(player_count)]
+    games_against = [[0.0] * player_count for _ in range(player_count)]
+    for (first_index, second_index), results in pair_results.items():
+        games_played = len(results) + BRADLEY_TERRY_PRIOR_DRAWS
+        first_points = sum(results) + DRAW * BRADLEY_TERRY_PRIOR_DRAWS
+        points_against[first_index][second_index] += first_points
+        points_against[second_index][first_index] += games_played - first_points
+        games_against[first_index][second_index] += games_played
+        games_against[second_index][first_index] += games_played
+
+    strengths = [1.0] * player_count
+    for _ in range(BRADLEY_TERRY_MAX_ITERATIONS):
+        updated_strengths = []
+        for player in range(player_count):
+            expected_games_weight = sum(
+                games_against[player][other] / (strengths[player] + strengths[other])
+                for other in range(player_count)
+                if games_against[player][other]
+            )
+            updated_strengths.append(sum(points_against[player]) / expected_games_weight)
+        mean_log_strength = sum(math.log(strength) for strength in updated_strengths) / player_count
+        updated_strengths = [strength / math.exp(mean_log_strength) for strength in updated_strengths]
+        largest_change = max(
+            abs(math.log(updated / previous)) for updated, previous in zip(updated_strengths, strengths)
+        )
+        strengths = updated_strengths
+        if largest_change < BRADLEY_TERRY_TOLERANCE:
+            break
+
+    anchor_strength = strengths[anchor_index]
+    return [INITIAL_RATING + ELO_SCALE * math.log10(strength / anchor_strength) for strength in strengths]
+
+
+def _write_ladder_results(directory, ladder_ratings: List[Tuple[int, float, float]]) -> Path:
+    results_path = Path(directory) / LADDER_RESULTS_FILENAME
+    with results_path.open("w", newline="") as results_file:
+        writer = csv.writer(results_file)
+        writer.writerow(["generation", "elo", "round_robin_score"])
+        for generation, elo, score in ladder_ratings:
+            writer.writerow([generation, f"{elo:.1f}", f"{score:.3f}"])
+    return results_path
+
+
+def _round_robin_scores(player_count: int, pair_results: Dict[Tuple[int, int], Sequence[float]]) -> List[float]:
+    points = [0.0] * player_count
+    games = [0] * player_count
+    for (first_index, second_index), results in pair_results.items():
+        points[first_index] += sum(results)
+        points[second_index] += len(results) - sum(results)
+        games[first_index] += len(results)
+        games[second_index] += len(results)
+    return [player_points / max(1, player_games) for player_points, player_games in zip(points, games)]
+
+
+def rate_ladder(
+    worker_pool,
+    ladder_directory=LADDER_DIRECTORY,
+    games_per_pair: int = LADDER_ROUND_ROBIN_GAMES_PER_PAIR,
+    max_players: int = LADDER_ROUND_ROBIN_MAX_PLAYERS,
+    max_steps_per_round: int = 10_000,
+) -> List[Tuple[int, float, float]]:
+    saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - 1)
+    if not saved_rungs:
+        return []
+    players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights())] + saved_rungs
+    pair_tasks = [
+        (first_index, second_index, players[first_index][1], players[second_index][1], games_per_pair, max_steps_per_round)
+        for first_index, second_index in itertools.combinations(range(len(players)), 2)
+    ]
+
+    pair_results: Dict[Tuple[int, int], Tuple[float, ...]] = {}
+    for first_index, second_index, results in tqdm(
+        worker_pool.imap_unordered(_play_ladder_pair_worker, pair_tasks),
+        total=len(pair_tasks),
+        unit="pair",
+        desc="ladder round robin",
+    ):
+        pair_results[(first_index, second_index)] = results
+
+    elo_ratings = fit_elo_ratings(len(players), pair_results, anchor_index=0)
+    scores = _round_robin_scores(len(players), pair_results)
+    ladder_ratings = [
+        (generation, elo, score) for (generation, _), elo, score in zip(players, elo_ratings, scores)
+    ]
+
+    results_path = _write_ladder_results(ladder_directory, ladder_ratings)
+    print(f"Ladder round robin ({games_per_pair} games per pair, random agent anchored at {INITIAL_RATING:.0f}):")
+    for generation, elo, score in ladder_ratings:
+        label = "random" if generation == RANDOM_ANCHOR_GENERATION else f"gen {generation}"
+        print(f"  {label:>10}: Elo {elo:7.1f}   score {score:.0%}")
+    print(f"Saved to {results_path}")
+    return ladder_ratings
+
+
+def rate_saved_ladder(
+    ladder_directory=LADDER_DIRECTORY,
+    games_per_pair: int = LADDER_ROUND_ROBIN_GAMES_PER_PAIR,
+    max_players: int = LADDER_ROUND_ROBIN_MAX_PLAYERS,
+) -> List[Tuple[int, float, float]]:
+    with mp.get_context("spawn").Pool(processes=NUM_WORKERS) as worker_pool:
+        return rate_ladder(worker_pool, ladder_directory, games_per_pair, max_players)
+
+
 def save_top_agents(ranked_population: List[GeneticAgent], generation: int, directory=TOP_AGENTS_DIRECTORY) -> List[Path]:
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -492,13 +655,16 @@ def train(
     survival_rate: float = 0.1,
     mutation_std: float = 0.02,
     games_per_opponent: int = 2,
-    entry_games_per_opponent: int = 6,
+    finalist_count: int = 20,
+    finalist_games_per_opponent: int = 8,
     use_shaped_rewards: bool = True,
     champion_path=CHAMPION_PATH,
     top_agents_directory=TOP_AGENTS_DIRECTORY,
     training_state_path=TRAINING_STATE_PATH,
     resume: bool = False,
     seed_agents_directory=None,
+    ladder_directory=LADDER_DIRECTORY,
+    ladder_games_per_pair: int = LADDER_ROUND_ROBIN_GAMES_PER_PAIR,
 ) -> GeneticAgent:
     if generations < 1:
         raise ValueError("generations must be at least 1")
@@ -506,10 +672,12 @@ def train(
         raise ValueError("population_size must be at least 2")
     if not 0.0 < survival_rate <= 1.0:
         raise ValueError("survival_rate must be greater than 0 and at most 1")
-    if games_per_opponent < 1 or entry_games_per_opponent < 1:
+    if games_per_opponent < 1 or finalist_games_per_opponent < 1:
         raise ValueError("games per opponent must be at least 1")
     if resume and seed_agents_directory is not None:
         raise ValueError("choose either resume or seed_agents_directory, not both")
+    if finalist_count < 1:
+        raise ValueError("finalist_count must be at least 1")
 
     if resume:
         progress = load_training_state(training_state_path)
@@ -521,6 +689,9 @@ def train(
     recent_generations = progress.recent_generations
     ladder = progress.ladder
     champion: Optional[GeneticAgent] = None
+    Path(ladder_directory).mkdir(parents=True, exist_ok=True)
+    if not resume:
+        _clear_ladder_checkpoints(ladder_directory)
 
     multiprocessing_context = mp.get_context("spawn")
     with multiprocessing_context.Pool(processes=NUM_WORKERS) as worker_pool:
@@ -541,18 +712,21 @@ def train(
             )
             population.sort(key=lambda agent: agent.rating, reverse=True)
 
-            pool_entrants = _select_pool_entrants(population, opponents)
-            entrant_records = _rate_against_opponents(
+            finalists = population[:finalist_count]
+            finalist_records = _rate_against_opponents(
                 worker_pool,
-                pool_entrants,
+                finalists,
                 opponents,
-                entry_games_per_opponent,
+                finalist_games_per_opponent,
                 max_steps_per_round,
                 use_shaped_rewards,
-                progress_label="pool entrants",
+                progress_label="finalists",
             )
-            records_by_agent_id.update(entrant_records)
-            population.sort(key=lambda agent: agent.rating, reverse=True)
+            records_by_agent_id.update(finalist_records)
+            finalists.sort(key=lambda agent: agent.rating, reverse=True)
+            population = finalists + population[finalist_count:]
+
+            pool_entrants = _select_pool_entrants(finalists, opponents)
 
             champion = copy.deepcopy(population[0])
             saved_path = champion.save_model(champion_path)
@@ -566,14 +740,19 @@ def train(
                 print(f"  Ladder: {ladder_summary}")
 
             recent_generations.append([_freeze(agent, generation) for agent in pool_entrants])
+            is_final_generation = generation == generations
             if generation % LADDER_INTERVAL == 0:
                 ladder = _add_ladder_rung(ladder, _freeze(champion, generation))
+            if generation % LADDER_INTERVAL == 0 or is_final_generation:
+                champion.save_model(_ladder_checkpoint_path(ladder_directory, generation))
 
             population = _next_generation(population, population_size, survival_rate, mutation_std)
             save_training_state(
                 TrainingProgress(generation, population, recent_generations, ladder),
                 training_state_path,
             )
+
+        rate_ladder(worker_pool, ladder_directory, ladder_games_per_pair, max_steps_per_round=max_steps_per_round)
 
     return champion
 
@@ -585,14 +764,18 @@ def _parse_command_line() -> argparse.Namespace:
     starting_point = parser.add_mutually_exclusive_group()
     starting_point.add_argument("--resume", action="store_true")
     starting_point.add_argument("--seed-from", type=Path, default=None)
+    starting_point.add_argument("--rate-ladder", action="store_true")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     command_line = _parse_command_line()
-    train(
-        generations=command_line.generations,
-        population_size=command_line.population_size,
-        resume=command_line.resume,
-        seed_agents_directory=command_line.seed_from,
-    )
+    if command_line.rate_ladder:
+        rate_saved_ladder()
+    else:
+        train(
+            generations=command_line.generations,
+            population_size=command_line.population_size,
+            resume=command_line.resume,
+            seed_agents_directory=command_line.seed_from,
+        )

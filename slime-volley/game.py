@@ -518,8 +518,8 @@ class SlimeVolleyball:
         player = self._coerce_player(player)
         values = [
             self.state.ball_x, self.state.ball_y, self.state.ball_vx, self.state.ball_vy,
-            self.state.player_x, self.state.player_y, self.state.player_vy,
-            self.state.opponent_x, self.state.opponent_y, self.state.opponent_vy,
+            self.state.player_x, self.state.player_y, self.state.player_vx, self.state.player_vy,
+            self.state.opponent_x, self.state.opponent_y, self.state.opponent_vx, self.state.opponent_vy,
         ]
         if player is Player.PLAYER_ONE:
             return values
@@ -527,8 +527,10 @@ class SlimeVolleyball:
         diameter = 2 * self.state.PADDLE_RADIUS
         return [
             self.state.SCREEN_WIDTH - self.state.ball_x, self.state.ball_y, -self.state.ball_vx, self.state.ball_vy,
-            self.state.SCREEN_WIDTH - self.state.opponent_x - diameter, self.state.opponent_y, self.state.opponent_vy,
-            self.state.SCREEN_WIDTH - self.state.player_x - diameter, self.state.player_y, self.state.player_vy,
+            self.state.SCREEN_WIDTH - self.state.opponent_x - diameter, self.state.opponent_y,
+            -self.state.opponent_vx, self.state.opponent_vy,
+            self.state.SCREEN_WIDTH - self.state.player_x - diameter, self.state.player_y,
+            -self.state.player_vx, self.state.player_vy,
         ]
 
     def get_states(self) -> Dict[str, List[float]]:
