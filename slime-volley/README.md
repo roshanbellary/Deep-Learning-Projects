@@ -78,13 +78,8 @@ if result.events:
 Each step's events are one-step indicators. They include player hits,
 crossings to either side of the net, and round wins. `done=True` indicates a
 round ended; the ball is reset for the next round and scores are retained.
-The game does not calculate numeric rewards. The training layer maps events to
-points: `+2` for the first hit while the ball remains on a side, `+4` for
-sending the ball to the other side, and `+100` for winning a round.
-Consecutive hits on the same side decay by half each time (`+2`, `+1`,
-`+0.5`, ...). The training-layer hit counter resets when the ball crosses the
-net or a new round begins. Pass `use_shaped_rewards=False` to `train()` to
-score only round wins.
+The game does not calculate numeric rewards. The DQN trainer (`trainer.py`)
+maps events to per-step rewards; the genetic trainer only counts points won.
 
 ### Genetic self-play
 
@@ -105,15 +100,21 @@ Ratings come from `performance_rating`: the single rating whose expected score
 against the opponents equals the actual score. It does not depend on game
 order, and a virtual draw against the average opponent keeps perfect records
 finite. After the first pass, the top `finalist_count` agents (default 20) are
-re-rated with `finalist_games_per_opponent` games (default 8) per opponent.
+re-rated with `finalist_games_per_opponent` games (default 4) per opponent.
 Survivors, the champion, and pool entrants are all chosen from these
 finalists, so selection is not decided by two lucky games.
 
-Round winners are decided by the event reward totals. Training serves with a
+Each game is played to `points_to_win` points (default 3), with the winner of
+each point serving the next one and the first serve alternating between games.
+A game's score is the share of points the agent won (a 3-1 win scores 0.75, a
+2-3 loss scores 0.4), so ratings see the margin, not just the winner. A point
+that lasts more than `max_steps_per_point` steps ends the game with the score
+so far, or a draw if no point was played. Single-point games were too noisy:
+whoever served often decided the result. Training serves with a
 small random sideways velocity (`SERVE_SIDEWAYS_JITTER`), because the game and
 the policies are deterministic and repeat games would otherwise be identical.
-Each generation logs the champion's win rate against the oldest and newest
-ladder rungs next to the win rate its rating predicts. A large gap means the
+Each generation logs the champion's average score against the oldest and
+newest ladder rungs next to the score its rating predicts. A large gap means the
 rating scale has drifted.
 
 ### Measuring improvement: the ladder round robin
@@ -124,7 +125,7 @@ directly, the champion of every 10th generation (and of the final generation)
 is saved to `champions/ladder/gen_<generation>.pth`. When training finishes,
 these rungs play a round robin against each other and against a fixed-seed
 random agent. Each pair plays `ladder_games_per_pair` games (default 20) with
-sides alternating and no shaped rewards.
+sides alternating, scored the same way as training games.
 
 Elo ratings are fitted to all of those results at once (a Bradley-Terry
 maximum-likelihood fit, with one virtual draw per pair to keep perfect records

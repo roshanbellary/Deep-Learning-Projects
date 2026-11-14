@@ -16,7 +16,7 @@ import torch
 from tqdm import tqdm
 
 from .agent_genetic import INITIAL_RATING, GeneticAgent, reserve_agent_ids_through
-from .game import Action, GameEvent, Player, SlimeVolleyball
+from .game import Action, Player, SlimeVolleyball
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
@@ -28,10 +28,7 @@ TRAINING_STATE_PATH = Path(__file__).resolve().parent / "champions" / "training_
 NUM_WORKERS = os.cpu_count() or 1
 EVALUATION_TASKS_PER_WORKER = 3
 
-FIRST_HIT_REWARD = 2.0
-HIT_REWARD_DECAY = 0.5
-CROSSING_REWARD = 4.0
-ROUND_WIN_REWARD = 100.0
+POINTS_TO_WIN = 3
 
 SERVE_SIDEWAYS_JITTER = 0.5
 
@@ -54,15 +51,9 @@ RATING_SEARCH_FLOOR = 0.0
 RATING_SEARCH_CEILING = 4000.0
 RATING_SEARCH_ITERATIONS = 60
 
-WIN = 1.0
 DRAW = 0.5
-LOSS = 0.0
 
 ACTIONS_BY_INDEX = list(Action)
-CROSSING_EVENTS = {
-    GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE,
-    GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE,
-}
 
 
 @dataclass(frozen=True)
@@ -80,7 +71,7 @@ class OpponentRecord:
     results: Tuple[float, ...]
 
     @property
-    def win_rate(self) -> float:
+    def average_score(self) -> float:
         return sum(self.results) / len(self.results)
 
 
@@ -91,100 +82,59 @@ def _choose_action(agent: GeneticAgent, raw_observation: List[float]) -> Action:
     return ACTIONS_BY_INDEX[int(action_index)]
 
 
-def _decayed_hit_reward(consecutive_hit_count: int) -> float:
-    return FIRST_HIT_REWARD * (HIT_REWARD_DECAY ** consecutive_hit_count)
+def _share_of_points(agent_points: int, total_points: int) -> float:
+    if total_points == 0:
+        return DRAW
+    return agent_points / total_points
 
 
-def _score_events(
-    events,
-    consecutive_hits: Dict[Player, int],
-    use_shaped_rewards: bool,
-) -> Tuple[float, float]:
-    player_one_points = 0.0
-    player_two_points = 0.0
-
-    if events & CROSSING_EVENTS:
-        consecutive_hits[Player.PLAYER_ONE] = 0
-        consecutive_hits[Player.PLAYER_TWO] = 0
-
-    for event in events:
-        if event is GameEvent.PLAYER_ONE_WON_ROUND:
-            player_one_points += ROUND_WIN_REWARD
-        elif event is GameEvent.PLAYER_TWO_WON_ROUND:
-            player_two_points += ROUND_WIN_REWARD
-        elif not use_shaped_rewards:
-            continue
-        elif event is GameEvent.PLAYER_ONE_HIT:
-            player_one_points += _decayed_hit_reward(consecutive_hits[Player.PLAYER_ONE])
-            consecutive_hits[Player.PLAYER_ONE] += 1
-        elif event is GameEvent.PLAYER_TWO_HIT:
-            player_two_points += _decayed_hit_reward(consecutive_hits[Player.PLAYER_TWO])
-            consecutive_hits[Player.PLAYER_TWO] += 1
-        elif event is GameEvent.BALL_CROSSED_TO_PLAYER_TWO_SIDE:
-            player_one_points += CROSSING_REWARD
-        elif event is GameEvent.BALL_CROSSED_TO_PLAYER_ONE_SIDE:
-            player_two_points += CROSSING_REWARD
-
-    return player_one_points, player_two_points
-
-
-def _play_one_round(
+def _play_one_game(
     game: SlimeVolleyball,
     agent: GeneticAgent,
     opponent: GeneticAgent,
     agent_side: Player,
-    max_steps_per_round: int,
-    use_shaped_rewards: bool,
+    max_steps_per_point: int,
+    points_to_win: int,
 ) -> float:
     player_one_agent = agent if agent_side is Player.PLAYER_ONE else opponent
     player_two_agent = opponent if agent_side is Player.PLAYER_ONE else agent
     observations = game.reset()
-    consecutive_hits = {Player.PLAYER_ONE: 0, Player.PLAYER_TWO: 0}
-    player_one_total = 0.0
-    player_two_total = 0.0
+    points_won = {Player.PLAYER_ONE: 0, Player.PLAYER_TWO: 0}
+    steps_in_current_point = 0
 
-    for _ in range(max_steps_per_round):
+    while max(points_won.values()) < points_to_win and steps_in_current_point < max_steps_per_point:
         step_result = game.step(
             _choose_action(player_one_agent, observations[Player.PLAYER_ONE.value]),
             _choose_action(player_two_agent, observations[Player.PLAYER_TWO.value]),
         )
-        player_one_points, player_two_points = _score_events(
-            step_result.events, consecutive_hits, use_shaped_rewards
-        )
-        player_one_total += player_one_points
-        player_two_total += player_two_points
         observations = step_result.states
+        steps_in_current_point += 1
         if step_result.done:
-            break
+            points_won[step_result.winner] += 1
+            steps_in_current_point = 0
 
-    agent_total = player_one_total if agent_side is Player.PLAYER_ONE else player_two_total
-    opponent_total = player_two_total if agent_side is Player.PLAYER_ONE else player_one_total
-    if agent_total > opponent_total:
-        return WIN
-    if agent_total < opponent_total:
-        return LOSS
-    return DRAW
+    return _share_of_points(points_won[agent_side], sum(points_won.values()))
 
 
 def play_match(
     agent: GeneticAgent,
     opponent: GeneticAgent,
     games: int = 2,
-    max_steps_per_round: int = 10_000,
-    use_shaped_rewards: bool = True,
+    max_steps_per_point: int = 10_000,
+    points_to_win: int = POINTS_TO_WIN,
     serve_sideways_jitter: float = SERVE_SIDEWAYS_JITTER,
 ) -> Tuple[float, ...]:
     agent.model.eval()
     opponent.model.eval()
     game = SlimeVolleyball(render=False, serve_sideways_jitter=serve_sideways_jitter)
     return tuple(
-        _play_one_round(
+        _play_one_game(
             game,
             agent,
             opponent,
             Player.PLAYER_ONE if game_number % 2 == 0 else Player.PLAYER_TWO,
-            max_steps_per_round,
-            use_shaped_rewards,
+            max_steps_per_point,
+            points_to_win,
         )
         for game_number in range(games)
     )
@@ -217,8 +167,8 @@ def _evaluate_agents_worker(evaluation_task):
         agent_weights,
         opponents,
         games_per_opponent,
-        max_steps_per_round,
-        use_shaped_rewards,
+        max_steps_per_point,
+        points_to_win,
     ) = evaluation_task
     torch.set_num_threads(1)
     opponent_agents = [
@@ -235,8 +185,8 @@ def _evaluate_agents_worker(evaluation_task):
                     agent,
                     opponent_agent,
                     games=games_per_opponent,
-                    max_steps_per_round=max_steps_per_round,
-                    use_shaped_rewards=use_shaped_rewards,
+                    max_steps_per_point=max_steps_per_point,
+                    points_to_win=points_to_win,
                 ),
             )
             for opponent, opponent_agent in opponent_agents
@@ -256,8 +206,8 @@ def _rate_against_opponents(
     agents: List[GeneticAgent],
     opponents: List[FrozenOpponent],
     games_per_opponent: int,
-    max_steps_per_round: int,
-    use_shaped_rewards: bool,
+    max_steps_per_point: int,
+    points_to_win: int,
     progress_label: str,
 ) -> Dict[int, List[OpponentRecord]]:
     agent_batches = _split_into_batches(agents, NUM_WORKERS * EVALUATION_TASKS_PER_WORKER)
@@ -267,8 +217,8 @@ def _rate_against_opponents(
             [agent.weights() for agent in batch],
             opponents,
             games_per_opponent,
-            max_steps_per_round,
-            use_shaped_rewards,
+            max_steps_per_point,
+            points_to_win,
         )
         for batch in agent_batches
     ]
@@ -357,7 +307,7 @@ def _ladder_report(
         expected_win_rate = _expected_score(champion.rating, rung.rating)
         rung_summaries.append(
             f"{label} rung (gen {rung.generation}, rating {rung.rating:.0f}): "
-            f"won {record.win_rate:.0%}, rating predicts {expected_win_rate:.0%}"
+            f"scored {record.average_score:.0%}, rating predicts {expected_win_rate:.0%}"
         )
     return " | ".join(rung_summaries)
 
@@ -392,14 +342,13 @@ def _evenly_spaced(items: List, max_count: int) -> List:
 
 
 def _play_ladder_pair_worker(pair_task):
-    first_index, second_index, first_weights, second_weights, games, max_steps_per_round = pair_task
+    first_index, second_index, first_weights, second_weights, games, max_steps_per_point = pair_task
     torch.set_num_threads(1)
     results = play_match(
         GeneticAgent.from_weights(first_weights),
         GeneticAgent.from_weights(second_weights),
         games=games,
-        max_steps_per_round=max_steps_per_round,
-        use_shaped_rewards=False,
+        max_steps_per_point=max_steps_per_point,
     )
     return first_index, second_index, results
 
@@ -468,14 +417,14 @@ def rate_ladder(
     ladder_directory=LADDER_DIRECTORY,
     games_per_pair: int = LADDER_ROUND_ROBIN_GAMES_PER_PAIR,
     max_players: int = LADDER_ROUND_ROBIN_MAX_PLAYERS,
-    max_steps_per_round: int = 10_000,
+    max_steps_per_point: int = 10_000,
 ) -> List[Tuple[int, float, float]]:
     saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - 1)
     if not saved_rungs:
         return []
     players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights())] + saved_rungs
     pair_tasks = [
-        (first_index, second_index, players[first_index][1], players[second_index][1], games_per_pair, max_steps_per_round)
+        (first_index, second_index, players[first_index][1], players[second_index][1], games_per_pair, max_steps_per_point)
         for first_index, second_index in itertools.combinations(range(len(players)), 2)
     ]
 
@@ -651,13 +600,13 @@ def _next_generation(
 def train(
     generations: int = 100,
     population_size: int = 100,
-    max_steps_per_round: int = 10_000,
+    max_steps_per_point: int = 10_000,
     survival_rate: float = 0.1,
     mutation_std: float = 0.02,
     games_per_opponent: int = 2,
     finalist_count: int = 20,
-    finalist_games_per_opponent: int = 8,
-    use_shaped_rewards: bool = True,
+    finalist_games_per_opponent: int = 4,
+    points_to_win: int = POINTS_TO_WIN,
     champion_path=CHAMPION_PATH,
     top_agents_directory=TOP_AGENTS_DIRECTORY,
     training_state_path=TRAINING_STATE_PATH,
@@ -706,8 +655,8 @@ def train(
                 population,
                 opponents,
                 games_per_opponent,
-                max_steps_per_round,
-                use_shaped_rewards,
+                max_steps_per_point,
+                points_to_win,
                 progress_label="population",
             )
             population.sort(key=lambda agent: agent.rating, reverse=True)
@@ -718,8 +667,8 @@ def train(
                 finalists,
                 opponents,
                 finalist_games_per_opponent,
-                max_steps_per_round,
-                use_shaped_rewards,
+                max_steps_per_point,
+                points_to_win,
                 progress_label="finalists",
             )
             records_by_agent_id.update(finalist_records)
@@ -752,7 +701,7 @@ def train(
                 training_state_path,
             )
 
-        rate_ladder(worker_pool, ladder_directory, ladder_games_per_pair, max_steps_per_round=max_steps_per_round)
+        rate_ladder(worker_pool, ladder_directory, ladder_games_per_pair, max_steps_per_point=max_steps_per_point)
 
     return champion
 
