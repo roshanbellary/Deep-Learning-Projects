@@ -79,9 +79,42 @@ Each step's events are one-step indicators. They include player hits,
 crossings to either side of the net, and round wins. `done=True` indicates a
 round ended; the ball is reset for the next round and scores are retained.
 The game does not calculate numeric rewards. The DQN trainer (`trainer.py`)
-maps events to per-step rewards; the genetic trainer only counts points won.
+maps events to per-step rewards. The genetic algorithm trains in PufferLib (see
+below) and only counts points won.
 
 ### Genetic self-play
+
+Training runs in PufferLib's Ocean `slimevolley` environment, a C port of
+`slimevolleygym`, instead of `game.py`. `puffer_arena.py` puts every game of an
+evaluation in one vectorized PufferLib environment, with one environment per
+game, and both sides set to self-play (`num_agents=2`). Each step, `PolicyGroups`
+runs each network once on all the slimes it controls in the batch, and games
+that have finished are no longer computed. The worker pool splits the scheduled
+games into `NUM_WORKERS * MATCH_TASKS_PER_WORKER` batches and plays them in
+parallel, one batched PufferLib run per worker process.
+
+Each game is played to `points_to_win` points (default 3). A game's score is
+the share of points the agent won (a 3-1 win scores 0.75, a 2-3 loss scores
+0.4), so ratings see the margin, not just the winner. Single-point games were
+too noisy: whoever served often decided the result. PufferLib caps an episode
+at 3000 ticks (30 ticks per second); a game that hits the cap ends with the
+score so far, or a draw if no point was played. The four network outputs
+map to PufferLib's `[forward, backward, jump]` buttons: `LEFT` (away from the
+net), `RIGHT` (toward the net), `UP`, and `NOTHING`. Serves are launched with a
+random velocity, and each batch gets a fresh seed.
+
+PufferLib's Ocean slime volley environment is not in the PyPI 3.0.0 release.
+Build it from the `3.0` branch, and install `threadpoolctl`, which keeps NumPy's
+matrix library single-threaded inside each worker (its threads make the tiny
+policy multiplies about 150x slower). `NO_TRAIN=1` skips PufferLib's PyTorch C++
+extension, which the genetic algorithm does not use and which fails to compile
+on some macOS toolchains:
+
+```
+pip install threadpoolctl
+NO_TRAIN=1 pip install --no-build-isolation \
+    "pufferlib @ git+https://github.com/PufferAI/PufferLib.git@3b5c6046bb8b46685d62d151720025507e3418c2"
+```
 
 `train_agent_genetic.py` evolves a fixed-size population of `GeneticAgent`s.
 Agents are never rated against each other. Each generation plays every agent
@@ -104,15 +137,6 @@ re-rated with `finalist_games_per_opponent` games (default 4) per opponent.
 Survivors, the champion, and pool entrants are all chosen from these
 finalists, so selection is not decided by two lucky games.
 
-Each game is played to `points_to_win` points (default 3), with the winner of
-each point serving the next one and the first serve alternating between games.
-A game's score is the share of points the agent won (a 3-1 win scores 0.75, a
-2-3 loss scores 0.4), so ratings see the margin, not just the winner. A point
-that lasts more than `max_steps_per_point` steps ends the game with the score
-so far, or a draw if no point was played. Single-point games were too noisy:
-whoever served often decided the result. Training serves with a
-small random sideways velocity (`SERVE_SIDEWAYS_JITTER`), because the game and
-the policies are deterministic and repeat games would otherwise be identical.
 Each generation logs the champion's average score against the oldest and
 newest ladder rungs next to the score its rating predicts. A large gap means the
 rating scale has drifted.
@@ -142,12 +166,13 @@ Starting a new training run clears `champions/ladder/`; resuming keeps it.
 The top `survival_rate` fraction survives unchanged, and the rest of the
 population is refilled with mutated children of survivors.
 
-Each observation has 12 values: ball x, y, vx, vy, then x, y, vx, vy for the
-agent's own slime, then the same four for the opponent. Player two's view is
-mirrored, including the sign of horizontal velocities.
-
-Observations are normalized inside `GeneticAgent.move` so positions and
-velocities fall roughly in `[-1, 1]`; raw pixel values saturate the network.
+`GeneticAgent` takes PufferLib's 12-value observation: x, y, vx, vy for the
+agent's own slime, then the ball, then the opponent. Values are in world units
+divided by 10. Each slime sees itself with its own side as positive x.
+`SlimeVolleyball.get_puffer_observation` builds the same observation from
+`game.py`, so trained agents can play in the pygame window. Checkpoints trained
+before the switch to PufferLib used pixel observations and do not play
+correctly with it.
 
 `GeneticAgent.mutate(mutation_std=0.02)` returns a new agent. It deep-copies
 the parent model and adds Gaussian noise to every weight; the parent is

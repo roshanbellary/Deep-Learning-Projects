@@ -7,7 +7,7 @@ import multiprocessing as mp
 import os
 import random
 import re
-from collections import deque
+from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Deque, Dict, List, Optional, Sequence, Tuple
@@ -16,7 +16,7 @@ import torch
 from tqdm import tqdm
 
 from .agent_genetic import INITIAL_RATING, GeneticAgent, reserve_agent_ids_through
-from .game import Action, Player, SlimeVolleyball
+from .puffer_arena import DRAW, POINTS_TO_WIN, WIN, play_matches
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
@@ -26,11 +26,8 @@ TOP_AGENT_COUNT = 5
 TOP_AGENT_FILENAME_PATTERN = re.compile(r"rank_(?P<rank>\d+)_gen_(?P<generation>\d+)_rating_(?P<rating>\d+)\.pth")
 TRAINING_STATE_PATH = Path(__file__).resolve().parent / "champions" / "training_state.pth"
 NUM_WORKERS = os.cpu_count() or 1
-EVALUATION_TASKS_PER_WORKER = 3
-
-POINTS_TO_WIN = 3
-
-SERVE_SIDEWAYS_JITTER = 0.5
+MATCH_TASKS_PER_WORKER = 3
+MATCH_SEED_BITS = 31
 
 BOOTSTRAP_ANCHOR_COUNT = 5
 POOL_MEMBERS_PER_GENERATION = 5
@@ -50,10 +47,6 @@ ELO_SCALE = 400.0
 RATING_SEARCH_FLOOR = 0.0
 RATING_SEARCH_CEILING = 4000.0
 RATING_SEARCH_ITERATIONS = 60
-
-DRAW = 0.5
-
-ACTIONS_BY_INDEX = list(Action)
 
 
 @dataclass(frozen=True)
@@ -75,69 +68,74 @@ class OpponentRecord:
         return sum(self.results) / len(self.results)
 
 
-def _choose_action(agent: GeneticAgent, raw_observation: List[float]) -> Action:
-    observation_tensor = torch.as_tensor(raw_observation, dtype=torch.float32)
-    with torch.inference_mode():
-        action_index = agent.move(observation_tensor)
-    return ACTIONS_BY_INDEX[int(action_index)]
-
-
-def _share_of_points(agent_points: int, total_points: int) -> float:
-    if total_points == 0:
-        return DRAW
-    return agent_points / total_points
-
-
-def _play_one_game(
-    game: SlimeVolleyball,
-    agent: GeneticAgent,
-    opponent: GeneticAgent,
-    agent_side: Player,
-    max_steps_per_point: int,
-    points_to_win: int,
-) -> float:
-    player_one_agent = agent if agent_side is Player.PLAYER_ONE else opponent
-    player_two_agent = opponent if agent_side is Player.PLAYER_ONE else agent
-    observations = game.reset()
-    points_won = {Player.PLAYER_ONE: 0, Player.PLAYER_TWO: 0}
-    steps_in_current_point = 0
-
-    while max(points_won.values()) < points_to_win and steps_in_current_point < max_steps_per_point:
-        step_result = game.step(
-            _choose_action(player_one_agent, observations[Player.PLAYER_ONE.value]),
-            _choose_action(player_two_agent, observations[Player.PLAYER_TWO.value]),
-        )
-        observations = step_result.states
-        steps_in_current_point += 1
-        if step_result.done:
-            points_won[step_result.winner] += 1
-            steps_in_current_point = 0
-
-    return _share_of_points(points_won[agent_side], sum(points_won.values()))
-
-
 def play_match(
     agent: GeneticAgent,
     opponent: GeneticAgent,
     games: int = 2,
-    max_steps_per_point: int = 10_000,
     points_to_win: int = POINTS_TO_WIN,
-    serve_sideways_jitter: float = SERVE_SIDEWAYS_JITTER,
 ) -> Tuple[float, ...]:
-    agent.model.eval()
-    opponent.model.eval()
-    game = SlimeVolleyball(render=False, serve_sideways_jitter=serve_sideways_jitter)
-    return tuple(
-        _play_one_game(
-            game,
-            agent,
-            opponent,
-            Player.PLAYER_ONE if game_number % 2 == 0 else Player.PLAYER_TWO,
-            max_steps_per_point,
-            points_to_win,
-        )
-        for game_number in range(games)
+    agent_plays_left_by_game = [_agent_plays_left(game_number) for game_number in range(games)]
+    left_results = play_matches(
+        [agent.weights(), opponent.weights()],
+        [(0, 1) if agent_plays_left else (1, 0) for agent_plays_left in agent_plays_left_by_game],
+        seed=random.getrandbits(MATCH_SEED_BITS),
+        points_to_win=points_to_win,
     )
+    return tuple(
+        _result_for_agent(left_result, agent_plays_left)
+        for left_result, agent_plays_left in zip(left_results, agent_plays_left_by_game)
+    )
+
+
+def _agent_plays_left(game_number: int) -> bool:
+    return game_number % 2 == 0
+
+
+def _result_for_agent(left_result: float, agent_plays_left: bool) -> float:
+    return left_result if agent_plays_left else WIN - left_result
+
+
+def _play_matches_worker(match_task) -> List[float]:
+    policy_weights, pairings, seed, points_to_win = match_task
+    torch.set_num_threads(1)
+    return play_matches(policy_weights, pairings, seed, points_to_win)
+
+
+def _build_match_task(weights_by_player_key: Dict, pairing_batch: List[Tuple], points_to_win: int) -> Tuple:
+    batch_player_keys = list(dict.fromkeys(player_key for pairing in pairing_batch for player_key in pairing))
+    policy_index_by_player_key = {player_key: index for index, player_key in enumerate(batch_player_keys)}
+    return (
+        [weights_by_player_key[player_key] for player_key in batch_player_keys],
+        [
+            (policy_index_by_player_key[left_key], policy_index_by_player_key[right_key])
+            for left_key, right_key in pairing_batch
+        ],
+        random.getrandbits(MATCH_SEED_BITS),
+        points_to_win,
+    )
+
+
+def _play_pairings_in_parallel(
+    worker_pool,
+    weights_by_player_key: Dict,
+    pairings: List[Tuple],
+    points_to_win: int,
+    progress_label: str,
+) -> List[float]:
+    match_tasks = [
+        _build_match_task(weights_by_player_key, pairing_batch, points_to_win)
+        for pairing_batch in _split_into_batches(pairings, NUM_WORKERS * MATCH_TASKS_PER_WORKER)
+    ]
+    left_results: List[float] = []
+    for batch_left_results in tqdm(
+        worker_pool.imap(_play_matches_worker, match_tasks),
+        total=len(match_tasks),
+        unit="batch",
+        desc=progress_label,
+        leave=False,
+    ):
+        left_results.extend(batch_left_results)
+    return left_results
 
 
 def _expected_score(rating: float, opponent_rating: float) -> float:
@@ -161,41 +159,6 @@ def performance_rating(opponent_ratings: Sequence[float], results: Sequence[floa
     return (rating_floor + rating_ceiling) / 2
 
 
-def _evaluate_agents_worker(evaluation_task):
-    (
-        agent_ids,
-        agent_weights,
-        opponents,
-        games_per_opponent,
-        max_steps_per_point,
-        points_to_win,
-    ) = evaluation_task
-    torch.set_num_threads(1)
-    opponent_agents = [
-        (opponent, GeneticAgent.from_weights(opponent.weights)) for opponent in opponents
-    ]
-    evaluations = []
-    for agent_id, weights in zip(agent_ids, agent_weights):
-        agent = GeneticAgent.from_weights(weights)
-        records = [
-            OpponentRecord(
-                opponent_id=opponent.agent_id,
-                opponent_rating=opponent.rating,
-                results=play_match(
-                    agent,
-                    opponent_agent,
-                    games=games_per_opponent,
-                    max_steps_per_point=max_steps_per_point,
-                    points_to_win=points_to_win,
-                ),
-            )
-            for opponent, opponent_agent in opponent_agents
-            if opponent.agent_id != agent_id
-        ]
-        evaluations.append((agent_id, records))
-    return evaluations
-
-
 def _split_into_batches(items: List, batch_count: int) -> List[List]:
     batch_size = max(1, math.ceil(len(items) / batch_count))
     return [items[start:start + batch_size] for start in range(0, len(items), batch_size)]
@@ -206,36 +169,42 @@ def _rate_against_opponents(
     agents: List[GeneticAgent],
     opponents: List[FrozenOpponent],
     games_per_opponent: int,
-    max_steps_per_point: int,
     points_to_win: int,
     progress_label: str,
 ) -> Dict[int, List[OpponentRecord]]:
-    agent_batches = _split_into_batches(agents, NUM_WORKERS * EVALUATION_TASKS_PER_WORKER)
-    evaluation_tasks = [
-        (
-            [agent.agent_id for agent in batch],
-            [agent.weights() for agent in batch],
-            opponents,
-            games_per_opponent,
-            max_steps_per_point,
-            points_to_win,
-        )
-        for batch in agent_batches
+    weights_by_agent_id = {opponent.agent_id: opponent.weights for opponent in opponents}
+    weights_by_agent_id.update({agent.agent_id: agent.weights() for agent in agents})
+    scheduled_games = [
+        (agent.agent_id, opponent.agent_id, _agent_plays_left(game_number))
+        for agent in agents
+        for opponent in opponents
+        if opponent.agent_id != agent.agent_id
+        for game_number in range(games_per_opponent)
     ]
+    pairings = [
+        (agent_id, opponent_id) if agent_plays_left else (opponent_id, agent_id)
+        for agent_id, opponent_id, agent_plays_left in scheduled_games
+    ]
+    left_results = _play_pairings_in_parallel(
+        worker_pool, weights_by_agent_id, pairings, points_to_win, progress_label
+    )
+
+    results_by_matchup: Dict[Tuple[int, int], List[float]] = defaultdict(list)
+    for (agent_id, opponent_id, agent_plays_left), left_result in zip(scheduled_games, left_results):
+        results_by_matchup[(agent_id, opponent_id)].append(_result_for_agent(left_result, agent_plays_left))
 
     records_by_agent_id: Dict[int, List[OpponentRecord]] = {}
-    for batch_evaluations in tqdm(
-        worker_pool.imap_unordered(_evaluate_agents_worker, evaluation_tasks),
-        total=len(evaluation_tasks),
-        unit="batch",
-        desc=progress_label,
-        leave=False,
-    ):
-        for agent_id, records in batch_evaluations:
-            records_by_agent_id[agent_id] = records
-
     for agent in agents:
-        records = records_by_agent_id[agent.agent_id]
+        records = [
+            OpponentRecord(
+                opponent_id=opponent.agent_id,
+                opponent_rating=opponent.rating,
+                results=tuple(results_by_matchup[(agent.agent_id, opponent.agent_id)]),
+            )
+            for opponent in opponents
+            if opponent.agent_id != agent.agent_id
+        ]
+        records_by_agent_id[agent.agent_id] = records
         agent.rating = performance_rating(
             [record.opponent_rating for record in records for _ in record.results],
             [result for record in records for result in record.results],
@@ -341,18 +310,6 @@ def _evenly_spaced(items: List, max_count: int) -> List:
     return [items[index] for index in chosen_indices]
 
 
-def _play_ladder_pair_worker(pair_task):
-    first_index, second_index, first_weights, second_weights, games, max_steps_per_point = pair_task
-    torch.set_num_threads(1)
-    results = play_match(
-        GeneticAgent.from_weights(first_weights),
-        GeneticAgent.from_weights(second_weights),
-        games=games,
-        max_steps_per_point=max_steps_per_point,
-    )
-    return first_index, second_index, results
-
-
 def fit_elo_ratings(
     player_count: int,
     pair_results: Dict[Tuple[int, int], Sequence[float]],
@@ -417,25 +374,29 @@ def rate_ladder(
     ladder_directory=LADDER_DIRECTORY,
     games_per_pair: int = LADDER_ROUND_ROBIN_GAMES_PER_PAIR,
     max_players: int = LADDER_ROUND_ROBIN_MAX_PLAYERS,
-    max_steps_per_point: int = 10_000,
+    points_to_win: int = POINTS_TO_WIN,
 ) -> List[Tuple[int, float, float]]:
     saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - 1)
     if not saved_rungs:
         return []
     players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights())] + saved_rungs
-    pair_tasks = [
-        (first_index, second_index, players[first_index][1], players[second_index][1], games_per_pair, max_steps_per_point)
+    weights_by_player_index = {player_index: weights for player_index, (_, weights) in enumerate(players)}
+    scheduled_games = [
+        (first_index, second_index, _agent_plays_left(game_number))
         for first_index, second_index in itertools.combinations(range(len(players)), 2)
+        for game_number in range(games_per_pair)
     ]
+    pairings = [
+        (first_index, second_index) if first_plays_left else (second_index, first_index)
+        for first_index, second_index, first_plays_left in scheduled_games
+    ]
+    left_results = _play_pairings_in_parallel(
+        worker_pool, weights_by_player_index, pairings, points_to_win, progress_label="ladder round robin"
+    )
 
-    pair_results: Dict[Tuple[int, int], Tuple[float, ...]] = {}
-    for first_index, second_index, results in tqdm(
-        worker_pool.imap_unordered(_play_ladder_pair_worker, pair_tasks),
-        total=len(pair_tasks),
-        unit="pair",
-        desc="ladder round robin",
-    ):
-        pair_results[(first_index, second_index)] = results
+    pair_results: Dict[Tuple[int, int], List[float]] = defaultdict(list)
+    for (first_index, second_index, first_plays_left), left_result in zip(scheduled_games, left_results):
+        pair_results[(first_index, second_index)].append(_result_for_agent(left_result, first_plays_left))
 
     elo_ratings = fit_elo_ratings(len(players), pair_results, anchor_index=0)
     scores = _round_robin_scores(len(players), pair_results)
@@ -600,7 +561,6 @@ def _next_generation(
 def train(
     generations: int = 100,
     population_size: int = 100,
-    max_steps_per_point: int = 10_000,
     survival_rate: float = 0.1,
     mutation_std: float = 0.02,
     games_per_opponent: int = 2,
@@ -655,7 +615,6 @@ def train(
                 population,
                 opponents,
                 games_per_opponent,
-                max_steps_per_point,
                 points_to_win,
                 progress_label="population",
             )
@@ -667,7 +626,6 @@ def train(
                 finalists,
                 opponents,
                 finalist_games_per_opponent,
-                max_steps_per_point,
                 points_to_win,
                 progress_label="finalists",
             )
@@ -701,7 +659,7 @@ def train(
                 training_state_path,
             )
 
-        rate_ladder(worker_pool, ladder_directory, ladder_games_per_pair, max_steps_per_point=max_steps_per_point)
+        rate_ladder(worker_pool, ladder_directory, ladder_games_per_pair, points_to_win=points_to_win)
 
     return champion
 

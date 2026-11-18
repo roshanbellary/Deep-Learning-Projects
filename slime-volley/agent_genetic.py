@@ -8,42 +8,9 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-try:
-    from .game import GameState
-except ImportError:
-    from game import GameState
-
 OBSERVATION_SIZE = 12
 INITIAL_RATING = 1000.0
 ACTION_COUNT = 4
-
-
-def _build_observation_scaling() -> tuple[Tensor, Tensor]:
-    game_constants = GameState()
-    half_width = game_constants.SCREEN_WIDTH / 2
-    half_height = game_constants.SCREEN_HEIGHT / 2
-    ball_speed_limit = game_constants.BALL_MAX_SPEED
-    slime_run_speed = game_constants.MOVEMENT_SPEED
-    slime_jump_speed = abs(game_constants.JUMP_FORCE)
-
-    observation_centers = torch.tensor([
-        half_width, half_height, 0.0, 0.0,
-        half_width, half_height, 0.0, 0.0,
-        half_width, half_height, 0.0, 0.0,
-    ])
-    observation_spans = torch.tensor([
-        half_width, half_height, ball_speed_limit, ball_speed_limit,
-        half_width, half_height, slime_run_speed, slime_jump_speed,
-        half_width, half_height, slime_run_speed, slime_jump_speed,
-    ])
-    return observation_centers, observation_spans
-
-
-OBSERVATION_CENTERS, OBSERVATION_SPANS = _build_observation_scaling()
-
-
-def normalize_observation(raw_observation: Tensor) -> Tensor:
-    return (raw_observation - OBSERVATION_CENTERS) / OBSERVATION_SPANS
 
 
 class BaseAgentModel(nn.Module):
@@ -76,8 +43,8 @@ class GeneticAgent:
         self.rating: float = INITIAL_RATING
         self.agent_id: int = next(_agent_id_counter)
 
-    def move(self, raw_observation: Tensor) -> Tensor:
-        action_logits = self.model(normalize_observation(raw_observation))
+    def move(self, observation: Tensor) -> Tensor:
+        action_logits = self.model(observation)
         return torch.argmax(action_logits, dim=-1)
 
     def mutate(self, mutation_std: float = 0.02) -> GeneticAgent:

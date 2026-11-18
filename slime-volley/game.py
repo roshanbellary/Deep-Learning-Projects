@@ -32,6 +32,9 @@ SLIME_RUN_SPEED_UNITS_PER_SECOND = 17.5
 BALL_MAX_SPEED_UNITS_PER_SECOND = 22.5
 BALL_RESTITUTION = 1.0
 
+PUFFER_GROUND_HEIGHT_UNITS = 1.5
+PUFFER_OBSERVATION_DIVISOR = 10.0
+
 
 def units_to_pixels(distance_units: float) -> float:
     return distance_units * PIXELS_PER_UNIT
@@ -533,6 +536,30 @@ class SlimeVolleyball:
             -self.state.player_vx, self.state.player_vy,
         ]
 
+    def get_puffer_observation(self, player: Union[Player, str] = Player.PLAYER_ONE) -> List[float]:
+        (
+            ball_x, ball_y, ball_vx, ball_vy,
+            own_left_x, own_top_y, own_vx, own_vy,
+            rival_left_x, rival_top_y, rival_vx, rival_vy,
+        ) = self.get_state(player)
+        radius = self.state.PADDLE_RADIUS
+
+        def world_x(pixel_x: float) -> float:
+            return (pixel_x - self.state.NET_CENTER_X) / PIXELS_PER_UNIT
+
+        def world_y(pixel_y: float) -> float:
+            return (self.state.GROUND_Y - pixel_y) / PIXELS_PER_UNIT + PUFFER_GROUND_HEIGHT_UNITS
+
+        def world_speed(pixels_per_frame: float) -> float:
+            return pixels_per_frame * FRAMES_PER_SECOND / PIXELS_PER_UNIT
+
+        own_side_view = [
+            -world_x(own_left_x + radius), world_y(own_top_y + radius), -world_speed(own_vx), -world_speed(own_vy),
+            -world_x(ball_x), world_y(ball_y), -world_speed(ball_vx), -world_speed(ball_vy),
+            world_x(rival_left_x + radius), world_y(rival_top_y + radius), world_speed(rival_vx), -world_speed(rival_vy),
+        ]
+        return [value / PUFFER_OBSERVATION_DIVISOR for value in own_side_view]
+
     def get_states(self) -> Dict[str, List[float]]:
         return {
             Player.PLAYER_ONE.value: self.get_state(Player.PLAYER_ONE),
@@ -588,7 +615,7 @@ class SlimeVolleyball:
         while self.running:
             self.running = not self._quit_requested()
             self.handle_input(control_opponent=False)
-            ai_action = self._agent_action(agent, self.get_state(Player.PLAYER_TWO))
+            ai_action = self._agent_action(agent, self.get_puffer_observation(Player.PLAYER_TWO))
             self._apply_action(Player.PLAYER_TWO, ai_action)
             self.update()
             self.render()
