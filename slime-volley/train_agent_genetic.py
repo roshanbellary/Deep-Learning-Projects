@@ -10,13 +10,13 @@ import re
 from collections import defaultdict, deque
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Deque, Dict, List, Optional, Sequence, Tuple
+from typing import Deque, Dict, List, Optional, Sequence, Tuple, Union
 
 import torch
 from tqdm import tqdm
 
 from .agent_genetic import INITIAL_RATING, GeneticAgent, reserve_agent_ids_through
-from .puffer_arena import DRAW, POINTS_TO_WIN, WIN, play_matches
+from .puffer_arena import DRAW, KINEMATIC_BOT, POINTS_TO_WIN, WIN, play_matches
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
@@ -39,6 +39,10 @@ LADDER_ROUND_ROBIN_GAMES_PER_PAIR = 20
 LADDER_ROUND_ROBIN_MAX_PLAYERS = 25
 RANDOM_ANCHOR_GENERATION = 0
 RANDOM_ANCHOR_SEED = 0
+BOT_AGENT_ID = -1
+BOT_GENERATION = -1
+BOT_CALIBRATION_GAMES_PER_ANCHOR = 40
+SCRIPTED_LADDER_PLAYER_COUNT = 2
 BRADLEY_TERRY_PRIOR_DRAWS = 1
 BRADLEY_TERRY_MAX_ITERATIONS = 1000
 BRADLEY_TERRY_TOLERANCE = 1e-9
@@ -53,8 +57,18 @@ RATING_SEARCH_ITERATIONS = 60
 class FrozenOpponent:
     agent_id: int
     generation: int
-    weights: Dict[str, torch.Tensor]
+    weights: Union[Dict[str, torch.Tensor], str]
     rating: float
+
+
+@dataclass
+class ScriptedPlayer:
+    agent_id: int
+    policy: str
+    rating: float = INITIAL_RATING
+
+    def weights(self) -> str:
+        return self.policy
 
 
 @dataclass(frozen=True)
@@ -230,6 +244,26 @@ def _bootstrap_anchors() -> List[FrozenOpponent]:
     return anchors
 
 
+def calibrate_bot_rating(worker_pool, games_per_anchor: int = BOT_CALIBRATION_GAMES_PER_ANCHOR, points_to_win: int = POINTS_TO_WIN) -> float:
+    bot_player = ScriptedPlayer(agent_id=BOT_AGENT_ID, policy=KINEMATIC_BOT)
+    _rate_against_opponents(
+        worker_pool, [bot_player], _bootstrap_anchors(), games_per_anchor, points_to_win, progress_label="bot calibration"
+    )
+    return bot_player.rating
+
+
+def _bot_opponent(bot_rating: float) -> FrozenOpponent:
+    return FrozenOpponent(agent_id=BOT_AGENT_ID, generation=BOT_GENERATION, weights=KINEMATIC_BOT, rating=bot_rating)
+
+
+def _bot_report(champion_records: List[OpponentRecord]) -> Optional[str]:
+    bot_records = [record for record in champion_records if record.opponent_id == BOT_AGENT_ID]
+    if not bot_records:
+        return None
+    bot_record = bot_records[0]
+    return f"kinematic bot (rating {bot_record.opponent_rating:.0f}): scored {bot_record.average_score:.0%}"
+
+
 def _build_opponent_pool(
     recent_generations: Deque[List[FrozenOpponent]],
     ladder: List[FrozenOpponent],
@@ -376,10 +410,10 @@ def rate_ladder(
     max_players: int = LADDER_ROUND_ROBIN_MAX_PLAYERS,
     points_to_win: int = POINTS_TO_WIN,
 ) -> List[Tuple[int, float, float]]:
-    saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - 1)
+    saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - SCRIPTED_LADDER_PLAYER_COUNT)
     if not saved_rungs:
         return []
-    players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights())] + saved_rungs
+    players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights()), (BOT_GENERATION, KINEMATIC_BOT)] + saved_rungs
     weights_by_player_index = {player_index: weights for player_index, (_, weights) in enumerate(players)}
     scheduled_games = [
         (first_index, second_index, _agent_plays_left(game_number))
@@ -407,7 +441,7 @@ def rate_ladder(
     results_path = _write_ladder_results(ladder_directory, ladder_ratings)
     print(f"Ladder round robin ({games_per_pair} games per pair, random agent anchored at {INITIAL_RATING:.0f}):")
     for generation, elo, score in ladder_ratings:
-        label = "random" if generation == RANDOM_ANCHOR_GENERATION else f"gen {generation}"
+        label = {RANDOM_ANCHOR_GENERATION: "random", BOT_GENERATION: "bot"}.get(generation, f"gen {generation}")
         print(f"  {label:>10}: Elo {elo:7.1f}   score {score:.0%}")
     print(f"Saved to {results_path}")
     return ladder_ratings
@@ -439,6 +473,7 @@ class TrainingProgress:
     population: List[GeneticAgent]
     recent_generations: Deque[List[FrozenOpponent]]
     ladder: List[FrozenOpponent]
+    bot_rating: Optional[float] = None
 
 
 def _fresh_progress(population_size: int) -> TrainingProgress:
@@ -471,6 +506,7 @@ def save_training_state(progress: TrainingProgress, path=TRAINING_STATE_PATH) ->
             for generation_members in progress.recent_generations
         ],
         "ladder": [asdict(rung) for rung in progress.ladder],
+        "bot_rating": progress.bot_rating,
     }
     partially_written_path = path.with_suffix(".partial")
     torch.save(serialized_state, partially_written_path)
@@ -491,6 +527,7 @@ def load_training_state(path=TRAINING_STATE_PATH) -> TrainingProgress:
             maxlen=POOL_GENERATION_WINDOW,
         ),
         ladder=[FrozenOpponent(**rung_fields) for rung_fields in serialized_state["ladder"]],
+        bot_rating=serialized_state.get("bot_rating"),
     )
     _reserve_ids_used_by(progress)
     return progress
@@ -604,11 +641,16 @@ def train(
 
     multiprocessing_context = mp.get_context("spawn")
     with multiprocessing_context.Pool(processes=NUM_WORKERS) as worker_pool:
+        if progress.bot_rating is None:
+            progress.bot_rating = calibrate_bot_rating(worker_pool, points_to_win=points_to_win)
+            print(f"Kinematic bot calibrated at rating {progress.bot_rating:.0f} against random agents at {INITIAL_RATING:.0f}")
+        bot_opponent = _bot_opponent(progress.bot_rating)
+
         for generation in tqdm(
             range(progress.completed_generation + 1, generations + 1),
             unit="generation",
         ):
-            opponents = _build_opponent_pool(recent_generations, ladder) or _bootstrap_anchors()
+            opponents = (_build_opponent_pool(recent_generations, ladder) or _bootstrap_anchors()) + [bot_opponent]
 
             records_by_agent_id = _rate_against_opponents(
                 worker_pool,
@@ -645,6 +687,9 @@ def train(
             ladder_summary = _ladder_report(champion, records_by_agent_id[champion.agent_id], ladder)
             if ladder_summary:
                 print(f"  Ladder: {ladder_summary}")
+            bot_summary = _bot_report(records_by_agent_id[champion.agent_id])
+            if bot_summary:
+                print(f"  Benchmark: {bot_summary}")
 
             recent_generations.append([_freeze(agent, generation) for agent in pool_entrants])
             is_final_generation = generation == generations
@@ -655,7 +700,7 @@ def train(
 
             population = _next_generation(population, population_size, survival_rate, mutation_std)
             save_training_state(
-                TrainingProgress(generation, population, recent_generations, ladder),
+                TrainingProgress(generation, population, recent_generations, ladder, progress.bot_rating),
                 training_state_path,
             )
 

@@ -1,10 +1,15 @@
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from threadpoolctl import threadpool_limits
 from torch import Tensor
 
 from pufferlib.ocean.slimevolley.slimevolley import SlimeVolley as PufferSlimeVolley
+
+try:
+    from . import kinematic_bot
+except ImportError:
+    import kinematic_bot
 
 AGENTS_PER_MATCH = 2
 LEFT_SLOT = 0
@@ -15,6 +20,9 @@ DRAW = 0.5
 POINTS_TO_WIN = 3
 LEFT_WON_POINT_REWARD = 1.0
 RIGHT_WON_POINT_REWARD = -1.0
+RETURN_OVER_NET_REWARD = 0.01
+KINEMATIC_BOT = "kinematic_bot"
+NO_SIDE = 0
 
 NOTHING_ACTION_INDEX = 3
 FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX = np.array(
@@ -28,6 +36,7 @@ FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX = np.array(
 
 Pairing = Tuple[int, int]
 ModelWeights = Dict[str, Tensor]
+Policy = Union[ModelWeights, str]
 NumpyLayer = Tuple[np.ndarray, np.ndarray]
 
 
@@ -50,9 +59,17 @@ def _action_logits(layers: List[NumpyLayer], observations: np.ndarray) -> np.nda
     return activations @ output_weights + output_biases
 
 
+def _layers_or_bot(policy: Policy) -> Optional[List[NumpyLayer]]:
+    if isinstance(policy, str):
+        if policy != KINEMATIC_BOT:
+            raise ValueError(f"Unknown scripted policy: {policy!r}")
+        return None
+    return _numpy_layers(policy)
+
+
 class PolicyGroups:
-    def __init__(self, policy_weights: Sequence[ModelWeights], policy_index_by_slot: Sequence[int]):
-        self.layers_by_policy = [_numpy_layers(model_weights) for model_weights in policy_weights]
+    def __init__(self, policy_weights: Sequence[Policy], policy_index_by_slot: Sequence[int]):
+        self.layers_by_policy = [_layers_or_bot(policy) for policy in policy_weights]
         self.policy_index_by_slot = np.asarray(policy_index_by_slot)
         self.groups: List[Tuple[int, np.ndarray]] = []
         self.set_active_slots(np.arange(len(self.policy_index_by_slot)))
@@ -73,14 +90,22 @@ class PolicyGroups:
 
     def fill_action_indices(self, observations: np.ndarray, action_indices: np.ndarray):
         for policy_index, slots in self.groups:
-            action_indices[slots] = _action_logits(self.layers_by_policy[policy_index], observations[slots]).argmax(axis=1)
+            layers = self.layers_by_policy[policy_index]
+            if layers is None:
+                action_indices[slots] = kinematic_bot.choose_actions(observations[slots])
+            else:
+                action_indices[slots] = _action_logits(layers, observations[slots]).argmax(axis=1)
 
 
-def _left_share_of_points(left_points_won: int, right_points_won: int) -> float:
-    total_points = left_points_won + right_points_won
-    if total_points == 0:
+def _left_share_of_reward(left_reward: float, right_reward: float) -> float:
+    total_reward = left_reward + right_reward
+    if total_reward == 0:
         return DRAW
-    return left_points_won / total_points
+    return left_reward / total_reward
+
+
+def _ball_side_seen_from_left(observations: np.ndarray) -> np.ndarray:
+    return np.sign(observations[LEFT_SLOT::AGENTS_PER_MATCH, kinematic_bot.BALL_X_INDEX]).astype(int)
 
 
 def _slots_of_unfinished_matches(match_finished: np.ndarray) -> np.ndarray:
@@ -88,7 +113,7 @@ def _slots_of_unfinished_matches(match_finished: np.ndarray) -> np.ndarray:
 
 
 def play_matches(
-    policy_weights: Sequence[ModelWeights],
+    policy_weights: Sequence[Policy],
     pairings: Sequence[Pairing],
     seed: int = 0,
     points_to_win: int = POINTS_TO_WIN,
@@ -98,7 +123,7 @@ def play_matches(
 
 
 def _play_matches_single_threaded(
-    policy_weights: Sequence[ModelWeights],
+    policy_weights: Sequence[Policy],
     pairings: Sequence[Pairing],
     seed: int,
     points_to_win: int,
@@ -111,14 +136,25 @@ def _play_matches_single_threaded(
     action_indices = np.full(len(policy_index_by_slot), NOTHING_ACTION_INDEX)
     left_points_won = np.zeros(len(pairings), dtype=int)
     right_points_won = np.zeros(len(pairings), dtype=int)
+    left_returns = np.zeros(len(pairings), dtype=int)
+    right_returns = np.zeros(len(pairings), dtype=int)
+    last_ball_side = np.full(len(pairings), NO_SIDE)
     match_finished = np.zeros(len(pairings), dtype=bool)
     while not match_finished.all():
         policies.fill_action_indices(observations, action_indices)
-        _, rewards, terminals, _, _ = environment.step(FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[action_indices])
+        observations, rewards, terminals, _, _ = environment.step(FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[action_indices])
         still_playing = ~match_finished
         left_rewards = rewards[LEFT_SLOT::AGENTS_PER_MATCH]
+        point_scored = left_rewards != 0
         left_points_won += still_playing & (left_rewards == LEFT_WON_POINT_REWARD)
         right_points_won += still_playing & (left_rewards == RIGHT_WON_POINT_REWARD)
+
+        ball_side = _ball_side_seen_from_left(observations)
+        ball_changed_side = (ball_side != NO_SIDE) & (last_ball_side != NO_SIDE) & (ball_side != last_ball_side)
+        left_returns += still_playing & ball_changed_side & (last_ball_side > 0)
+        right_returns += still_playing & ball_changed_side & (last_ball_side < 0)
+        last_ball_side = np.where(ball_side != NO_SIDE, ball_side, last_ball_side)
+        last_ball_side[point_scored] = NO_SIDE
         someone_reached_target = np.maximum(left_points_won, right_points_won) >= points_to_win
         episode_ended = terminals[LEFT_SLOT::AGENTS_PER_MATCH].astype(bool)
         newly_finished = still_playing & (someone_reached_target | episode_ended)
@@ -127,4 +163,6 @@ def _play_matches_single_threaded(
             action_indices[np.repeat(match_finished, AGENTS_PER_MATCH)] = NOTHING_ACTION_INDEX
             policies.set_active_slots(_slots_of_unfinished_matches(match_finished))
     environment.close()
-    return [_left_share_of_points(left, right) for left, right in zip(left_points_won, right_points_won)]
+    left_reward = left_points_won + RETURN_OVER_NET_REWARD * left_returns
+    right_reward = right_points_won + RETURN_OVER_NET_REWARD * right_returns
+    return [_left_share_of_reward(left, right) for left, right in zip(left_reward, right_reward)]

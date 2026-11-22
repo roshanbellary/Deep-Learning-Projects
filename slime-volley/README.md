@@ -93,15 +93,41 @@ that have finished are no longer computed. The worker pool splits the scheduled
 games into `NUM_WORKERS * MATCH_TASKS_PER_WORKER` batches and plays them in
 parallel, one batched PufferLib run per worker process.
 
-Each game is played to `points_to_win` points (default 3). A game's score is
-the share of points the agent won (a 3-1 win scores 0.75, a 2-3 loss scores
-0.4), so ratings see the margin, not just the winner. Single-point games were
-too noisy: whoever served often decided the result. PufferLib caps an episode
+Each game is played to `points_to_win` points (default 3). Each side earns 1
+for every point it wins and `RETURN_OVER_NET_REWARD` (0.01) every time the ball
+crosses the net from its side to the opponent's. A game's score is the agent's
+share of the total (a 3-1 win with no returns scores 0.75), so ratings see the
+margin, and agents that keep the ball in play earn a little credit before they
+can score. A return is counted when the ball changes sides, so a serve or a
+point reset never counts as one. Single-point games were too noisy: whoever
+served often decided the result. PufferLib caps an episode
 at 3000 ticks (30 ticks per second); a game that hits the cap ends with the
 score so far, or a draw if no point was played. The four network outputs
 map to PufferLib's `[forward, backward, jump]` buttons: `LEFT` (away from the
 net), `RIGHT` (toward the net), `UP`, and `NOTHING`. Serves are launched with a
 random velocity, and each batch gets a fresh seed.
+
+### Kinematic bot benchmark
+
+`kinematic_bot.py` is a scripted player that every generation also plays
+against. When the ball is heading toward it, it simulates the ball's flight
+with PufferLib's gravity, speed cap, walls and net to predict where the ball
+comes down to slime height. If that point is on its side, it moves to stand
+`return_offset` (0.3) units behind it, so the ball hits the net-facing side of
+its dome and goes back over, and it jumps when the ball is within `jump_reach`
+(2) units and below `jump_height` (9). Otherwise it waits at the middle of its
+half. The first serve is handled the same way. It uses the same four actions as
+the networks. Against 100 five-life episodes, it wins 78% of points against a
+random network, 71% against the generation 1000 champion of the first PufferLib
+run, and 11% against PufferLib's own built-in bot.
+
+At the start of training the bot plays the five random bootstrap agents (40
+games each) and its performance rating against them, with the random agents at
+`1000`, is frozen as its rating for the whole run and saved in the training
+state. It is added to the opponent pool every generation, so agents are always
+rated partly against a target that never changes, and each generation logs the
+champion's score against it on a `Benchmark:` line. It also takes part in the
+final ladder round robin, labelled `bot`.
 
 PufferLib's Ocean slime volley environment is not in the PyPI 3.0.0 release.
 Build it from the `3.0` branch, and install `threadpoolctl`, which keeps NumPy's
@@ -147,8 +173,8 @@ Ratings during training are measured against a moving opponent pool, so a flat
 rating curve does not prove the agents stopped improving. To measure progress
 directly, the champion of every 10th generation (and of the final generation)
 is saved to `champions/ladder/gen_<generation>.pth`. When training finishes,
-these rungs play a round robin against each other and against a fixed-seed
-random agent. Each pair plays `ladder_games_per_pair` games (default 20) with
+these rungs play a round robin against each other, the kinematic bot and a
+fixed-seed random agent. Each pair plays `ladder_games_per_pair` games (default 20) with
 sides alternating, scored the same way as training games.
 
 Elo ratings are fitted to all of those results at once (a Bradley-Terry
