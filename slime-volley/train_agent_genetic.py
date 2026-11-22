@@ -43,6 +43,7 @@ BOT_AGENT_ID = -1
 BOT_GENERATION = -1
 BOT_CALIBRATION_GAMES_PER_ANCHOR = 40
 SCRIPTED_LADDER_PLAYER_COUNT = 2
+SEED_RATING_GAMES_AGAINST_BOT = 40
 BRADLEY_TERRY_PRIOR_DRAWS = 1
 BRADLEY_TERRY_MAX_ITERATIONS = 1000
 BRADLEY_TERRY_TOLERANCE = 1e-9
@@ -262,6 +263,21 @@ def _bot_report(champion_records: List[OpponentRecord]) -> Optional[str]:
         return None
     bot_record = bot_records[0]
     return f"kinematic bot (rating {bot_record.opponent_rating:.0f}): scored {bot_record.average_score:.0%}"
+
+
+def _rerate_seed_agents_against_bot(
+    worker_pool, progress: "TrainingProgress", bot_opponent: FrozenOpponent, points_to_win: int
+) -> None:
+    seed_members = progress.recent_generations[0]
+    seed_ids = {member.agent_id for member in seed_members}
+    seed_agents = [agent for agent in progress.population if agent.agent_id in seed_ids]
+    _rate_against_opponents(
+        worker_pool, seed_agents, [bot_opponent], SEED_RATING_GAMES_AGAINST_BOT, points_to_win, progress_label="seed rating"
+    )
+    seed_generation = seed_members[0].generation
+    progress.recent_generations[0] = [_freeze(agent, seed_generation) for agent in seed_agents]
+    ratings = ", ".join(f"{agent.rating:.0f}" for agent in seed_agents)
+    print(f"Seed agents re-rated against the kinematic bot: {ratings}")
 
 
 def _build_opponent_pool(
@@ -645,6 +661,8 @@ def train(
             progress.bot_rating = calibrate_bot_rating(worker_pool, points_to_win=points_to_win)
             print(f"Kinematic bot calibrated at rating {progress.bot_rating:.0f} against random agents at {INITIAL_RATING:.0f}")
         bot_opponent = _bot_opponent(progress.bot_rating)
+        if seed_agents_directory is not None and not resume:
+            _rerate_seed_agents_against_bot(worker_pool, progress, bot_opponent, points_to_win)
 
         for generation in tqdm(
             range(progress.completed_generation + 1, generations + 1),
