@@ -44,6 +44,9 @@ BOT_GENERATION = -1
 BOT_CALIBRATION_GAMES_PER_ANCHOR = 40
 SCRIPTED_LADDER_PLAYER_COUNT = 2
 SEED_RATING_GAMES_AGAINST_BOT = 40
+BOT_GAMES_MULTIPLIER = 4
+BOT_FITNESS_SHARE = 0.5
+POOL_GAME_WEIGHT = 1.0
 BRADLEY_TERRY_PRIOR_DRAWS = 1
 BRADLEY_TERRY_MAX_ITERATIONS = 1000
 BRADLEY_TERRY_TOLERANCE = 1e-9
@@ -157,16 +160,25 @@ def _expected_score(rating: float, opponent_rating: float) -> float:
     return 1 / (1 + 10 ** ((opponent_rating - rating) / 400))
 
 
-def performance_rating(opponent_ratings: Sequence[float], results: Sequence[float]) -> float:
+def performance_rating(
+    opponent_ratings: Sequence[float],
+    results: Sequence[float],
+    game_weights: Optional[Sequence[float]] = None,
+) -> float:
+    if game_weights is None:
+        game_weights = [POOL_GAME_WEIGHT] * len(results)
     prior_opponent_rating = sum(opponent_ratings) / len(opponent_ratings)
     rated_opponents = list(opponent_ratings) + [prior_opponent_rating]
-    total_score = sum(results) + DRAW
+    weights = list(game_weights) + [POOL_GAME_WEIGHT]
+    total_score = sum(weight * result for weight, result in zip(game_weights, results)) + DRAW * POOL_GAME_WEIGHT
 
     rating_floor = RATING_SEARCH_FLOOR
     rating_ceiling = RATING_SEARCH_CEILING
     for _ in range(RATING_SEARCH_ITERATIONS):
         rating_guess = (rating_floor + rating_ceiling) / 2
-        expected_total = sum(_expected_score(rating_guess, rating) for rating in rated_opponents)
+        expected_total = sum(
+            weight * _expected_score(rating_guess, rating) for weight, rating in zip(weights, rated_opponents)
+        )
         if expected_total < total_score:
             rating_floor = rating_guess
         else:
@@ -194,7 +206,7 @@ def _rate_against_opponents(
         for agent in agents
         for opponent in opponents
         if opponent.agent_id != agent.agent_id
-        for game_number in range(games_per_opponent)
+        for game_number in range(_games_against(opponent, games_per_opponent))
     ]
     pairings = [
         (agent_id, opponent_id) if agent_plays_left else (opponent_id, agent_id)
@@ -220,11 +232,32 @@ def _rate_against_opponents(
             if opponent.agent_id != agent.agent_id
         ]
         records_by_agent_id[agent.agent_id] = records
+        game_weight_by_opponent_id = _game_weight_by_opponent_id(records)
         agent.rating = performance_rating(
             [record.opponent_rating for record in records for _ in record.results],
             [result for record in records for result in record.results],
+            [game_weight_by_opponent_id[record.opponent_id] for record in records for _ in record.results],
         )
     return records_by_agent_id
+
+
+def _games_against(opponent: FrozenOpponent, games_per_opponent: int) -> int:
+    if opponent.agent_id == BOT_AGENT_ID:
+        return games_per_opponent * BOT_GAMES_MULTIPLIER
+    return games_per_opponent
+
+
+def _game_weight_by_opponent_id(records: List[OpponentRecord]) -> Dict[int, float]:
+    bot_game_count = sum(len(record.results) for record in records if record.opponent_id == BOT_AGENT_ID)
+    pool_game_count = sum(len(record.results) for record in records if record.opponent_id != BOT_AGENT_ID)
+    bot_game_weight = POOL_GAME_WEIGHT
+    if bot_game_count and pool_game_count:
+        bot_share_ratio = BOT_FITNESS_SHARE / (1 - BOT_FITNESS_SHARE)
+        bot_game_weight = bot_share_ratio * pool_game_count / bot_game_count
+    return {
+        record.opponent_id: bot_game_weight if record.opponent_id == BOT_AGENT_ID else POOL_GAME_WEIGHT
+        for record in records
+    }
 
 
 def _freeze(agent: GeneticAgent, generation: int) -> FrozenOpponent:

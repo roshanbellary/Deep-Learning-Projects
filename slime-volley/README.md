@@ -126,7 +126,14 @@ games each) and its performance rating against them, with the random agents at
 `1000`, is frozen as its rating for the whole run and saved in the training
 state. It is added to the opponent pool every generation, so agents are always
 rated partly against a target that never changes, and each generation logs the
-champion's score against it on a `Benchmark:` line. It also takes part in the
+champion's score against it on a `Benchmark:` line.
+
+The bot is weighted heavily in fitness. Each agent plays it
+`BOT_GAMES_MULTIPLIER` (4) times as many games as any other opponent, and
+`performance_rating` weights those games so that together they count for
+`BOT_FITNESS_SHARE` (half) of the agent's rating, with all the pool games
+sharing the other half. Without the weighting the bot was one opponent in about
+30 and the champions' score against it did not improve over 150 generations. It also takes part in the
 final ladder round robin, labelled `bot`.
 
 PufferLib's Ocean slime volley environment is not in the PyPI 3.0.0 release.

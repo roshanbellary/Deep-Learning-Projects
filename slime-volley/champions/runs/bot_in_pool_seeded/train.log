@@ -1,0 +1,462 @@
+Kinematic bot calibrated at rating 1327 against random agents at 1000
+Seed agents re-rated against the kinematic bot: 1125, 1117, 1181, 1094, 1123
+Generation 1001: champion rating 1167 against 6 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1002: champion rating 1178 against 11 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1003: champion rating 1182 against 16 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1004: champion rating 1210 against 21 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1005: champion rating 1178 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 48%
+Generation 1006: champion rating 1200 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1007: champion rating 1189 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1008: champion rating 1200 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 48%
+Generation 1009: champion rating 1177 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 35%
+Generation 1010: champion rating 1198 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 48%
+Generation 1011: champion rating 1187 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: kinematic bot (rating 1327): scored 45%
+Generation 1012: champion rating 1185 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 67%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1013: champion rating 1189 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 38%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1014: champion rating 1216 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 18%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1015: champion rating 1207 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 77%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1016: champion rating 1214 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 76%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1017: champion rating 1223 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 74%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1018: champion rating 1210 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 34%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 19%
+Generation 1019: champion rating 1206 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 52%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 11%
+Generation 1020: champion rating 1252 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 70%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 20%
+Generation 1021: champion rating 1260 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 79%, rating predicts 59%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1022: champion rating 1238 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 61%, rating predicts 56%
+  Benchmark: kinematic bot (rating 1327): scored 40%
+Generation 1023: champion rating 1225 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 32%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1024: champion rating 1270 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 41%, rating predicts 60%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1025: champion rating 1238 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 71%, rating predicts 56%
+  Benchmark: kinematic bot (rating 1327): scored 36%
+Generation 1026: champion rating 1298 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 86%, rating predicts 64%
+  Benchmark: kinematic bot (rating 1327): scored 29%
+Generation 1027: champion rating 1296 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 62%, rating predicts 64%
+  Benchmark: kinematic bot (rating 1327): scored 21%
+Generation 1028: champion rating 1247 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 25%, rating predicts 57% | newest rung (gen 1020, rating 1252): scored 50%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 52%
+Generation 1029: champion rating 1244 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 87%, rating predicts 57%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1030: champion rating 1267 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 63%, rating predicts 60%
+  Benchmark: kinematic bot (rating 1327): scored 40%
+Generation 1031: champion rating 1255 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 55%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 14%
+Generation 1032: champion rating 1272 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 53%, rating predicts 61%
+  Benchmark: kinematic bot (rating 1327): scored 14%
+Generation 1033: champion rating 1251 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 58%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 27%
+Generation 1034: champion rating 1267 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 71%, rating predicts 60%
+  Benchmark: kinematic bot (rating 1327): scored 45%
+Generation 1035: champion rating 1249 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 36%, rating predicts 57%
+  Benchmark: kinematic bot (rating 1327): scored 12%
+Generation 1036: champion rating 1268 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 63%, rating predicts 60%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1037: champion rating 1259 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 37%, rating predicts 59% | newest rung (gen 1030, rating 1267): scored 35%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 15%
+Generation 1038: champion rating 1299 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1010, rating 1198): scored 64%, rating predicts 64%
+  Benchmark: kinematic bot (rating 1327): scored 60%
+Generation 1039: champion rating 1277 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 74%, rating predicts 61% | newest rung (gen 1030, rating 1267): scored 73%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 34%
+Generation 1040: champion rating 1278 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 57%, rating predicts 61% | newest rung (gen 1030, rating 1267): scored 38%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1041: champion rating 1299 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 59%, rating predicts 64% | newest rung (gen 1040, rating 1278): scored 87%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1042: champion rating 1252 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 62%, rating predicts 58% | newest rung (gen 1040, rating 1278): scored 47%, rating predicts 46%
+  Benchmark: kinematic bot (rating 1327): scored 25%
+Generation 1043: champion rating 1254 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 47%, rating predicts 58% | newest rung (gen 1040, rating 1278): scored 81%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1044: champion rating 1284 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 69%, rating predicts 62% | newest rung (gen 1040, rating 1278): scored 63%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 34%
+Generation 1045: champion rating 1271 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 52%, rating predicts 60% | newest rung (gen 1040, rating 1278): scored 48%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 41%
+Generation 1046: champion rating 1280 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 70%, rating predicts 62% | newest rung (gen 1040, rating 1278): scored 25%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1047: champion rating 1268 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 80%, rating predicts 60% | newest rung (gen 1040, rating 1278): scored 40%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 35%
+Generation 1048: champion rating 1264 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 43%, rating predicts 59% | newest rung (gen 1040, rating 1278): scored 46%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1049: champion rating 1257 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 69%, rating predicts 58% | newest rung (gen 1040, rating 1278): scored 43%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 44%
+Generation 1050: champion rating 1266 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 32%, rating predicts 60% | newest rung (gen 1040, rating 1278): scored 66%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1051: champion rating 1291 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 79%, rating predicts 63% | newest rung (gen 1050, rating 1266): scored 70%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1052: champion rating 1281 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 75%, rating predicts 62% | newest rung (gen 1050, rating 1266): scored 29%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 37%
+Generation 1053: champion rating 1309 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 58%, rating predicts 66% | newest rung (gen 1050, rating 1266): scored 78%, rating predicts 56%
+  Benchmark: kinematic bot (rating 1327): scored 42%
+Generation 1054: champion rating 1287 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 76%, rating predicts 63% | newest rung (gen 1050, rating 1266): scored 53%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 27%
+Generation 1055: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 36%, rating predicts 64% | newest rung (gen 1050, rating 1266): scored 64%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 28%
+Generation 1056: champion rating 1283 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 48%, rating predicts 62% | newest rung (gen 1050, rating 1266): scored 76%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1057: champion rating 1273 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 38%, rating predicts 61% | newest rung (gen 1050, rating 1266): scored 62%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 18%
+Generation 1058: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 62%, rating predicts 64% | newest rung (gen 1050, rating 1266): scored 77%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 7%
+Generation 1059: champion rating 1299 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 26%, rating predicts 64% | newest rung (gen 1050, rating 1266): scored 86%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 35%
+Generation 1060: champion rating 1282 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 17%, rating predicts 62% | newest rung (gen 1050, rating 1266): scored 60%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1061: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 34%, rating predicts 64% | newest rung (gen 1060, rating 1282): scored 52%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 25%
+Generation 1062: champion rating 1266 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 60%, rating predicts 60% | newest rung (gen 1050, rating 1266): scored 62%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 36%
+Generation 1063: champion rating 1294 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 83%, rating predicts 64% | newest rung (gen 1050, rating 1266): scored 50%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 56%
+Generation 1064: champion rating 1286 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 58%, rating predicts 62% | newest rung (gen 1060, rating 1282): scored 80%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 16%
+Generation 1065: champion rating 1272 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 21%, rating predicts 61% | newest rung (gen 1060, rating 1282): scored 47%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 37%
+Generation 1066: champion rating 1306 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 66%, rating predicts 65% | newest rung (gen 1060, rating 1282): scored 65%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 10%
+Generation 1067: champion rating 1298 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 60%, rating predicts 64% | newest rung (gen 1060, rating 1282): scored 37%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 27%
+Generation 1068: champion rating 1314 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 86%, rating predicts 66% | newest rung (gen 1050, rating 1266): scored 86%, rating predicts 57%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1069: champion rating 1303 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 70%, rating predicts 65% | newest rung (gen 1060, rating 1282): scored 42%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 30%
+Generation 1070: champion rating 1312 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 65%, rating predicts 66% | newest rung (gen 1050, rating 1266): scored 32%, rating predicts 57%
+  Benchmark: kinematic bot (rating 1327): scored 35%
+Generation 1071: champion rating 1325 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 70%, rating predicts 68% | newest rung (gen 1050, rating 1266): scored 47%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1072: champion rating 1323 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 43%, rating predicts 67% | newest rung (gen 1050, rating 1266): scored 64%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 42%
+Generation 1073: champion rating 1304 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 49%, rating predicts 65% | newest rung (gen 1050, rating 1266): scored 38%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 15%
+Generation 1074: champion rating 1304 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 53%, rating predicts 65% | newest rung (gen 1070, rating 1312): scored 36%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 19%
+Generation 1075: champion rating 1319 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 53%, rating predicts 67% | newest rung (gen 1070, rating 1312): scored 63%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 60%
+Generation 1076: champion rating 1322 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 39%, rating predicts 67% | newest rung (gen 1070, rating 1312): scored 43%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1077: champion rating 1294 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 60%, rating predicts 64% | newest rung (gen 1070, rating 1312): scored 60%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 7%
+Generation 1078: champion rating 1300 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 63%, rating predicts 64% | newest rung (gen 1050, rating 1266): scored 74%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 18%
+Generation 1079: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 32%, rating predicts 64% | newest rung (gen 1070, rating 1312): scored 30%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 25%
+Generation 1080: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 49%, rating predicts 64% | newest rung (gen 1070, rating 1312): scored 56%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 20%
+Generation 1081: champion rating 1315 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 54%, rating predicts 66% | newest rung (gen 1080, rating 1296): scored 60%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1082: champion rating 1297 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 45%, rating predicts 64% | newest rung (gen 1080, rating 1296): scored 60%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 10%
+Generation 1083: champion rating 1311 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 54%, rating predicts 66% | newest rung (gen 1080, rating 1296): scored 59%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 51%
+Generation 1084: champion rating 1316 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 46%, rating predicts 66% | newest rung (gen 1080, rating 1296): scored 46%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 8%
+Generation 1085: champion rating 1305 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 83%, rating predicts 65% | newest rung (gen 1080, rating 1296): scored 56%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1086: champion rating 1309 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 64%, rating predicts 66% | newest rung (gen 1080, rating 1296): scored 83%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1087: champion rating 1310 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 65%, rating predicts 66% | newest rung (gen 1080, rating 1296): scored 41%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 8%
+Generation 1088: champion rating 1298 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 71%, rating predicts 64% | newest rung (gen 1080, rating 1296): scored 70%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1089: champion rating 1296 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 35%, rating predicts 64% | newest rung (gen 1080, rating 1296): scored 74%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1090: champion rating 1328 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 86%, rating predicts 68% | newest rung (gen 1080, rating 1296): scored 73%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 14%
+Generation 1091: champion rating 1297 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 63%, rating predicts 64% | newest rung (gen 1090, rating 1328): scored 15%, rating predicts 46%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1092: champion rating 1311 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 65%, rating predicts 66% | newest rung (gen 1090, rating 1328): scored 28%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1093: champion rating 1322 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 39%, rating predicts 67% | newest rung (gen 1090, rating 1328): scored 65%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 27%
+Generation 1094: champion rating 1301 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 79%, rating predicts 64% | newest rung (gen 1090, rating 1328): scored 44%, rating predicts 46%
+  Benchmark: kinematic bot (rating 1327): scored 15%
+Generation 1095: champion rating 1319 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 54%, rating predicts 67% | newest rung (gen 1090, rating 1328): scored 39%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 30%
+Generation 1096: champion rating 1287 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 44%, rating predicts 63% | newest rung (gen 1080, rating 1296): scored 62%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1097: champion rating 1318 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 68%, rating predicts 67% | newest rung (gen 1090, rating 1328): scored 75%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1098: champion rating 1305 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 38%, rating predicts 65% | newest rung (gen 1090, rating 1328): scored 41%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 11%
+Generation 1099: champion rating 1312 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 60%, rating predicts 66% | newest rung (gen 1090, rating 1328): scored 65%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1100: champion rating 1315 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 20%, rating predicts 66% | newest rung (gen 1090, rating 1328): scored 44%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 31%
+Generation 1101: champion rating 1314 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 54%, rating predicts 66% | newest rung (gen 1100, rating 1315): scored 61%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 19%
+Generation 1102: champion rating 1334 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 44%, rating predicts 69% | newest rung (gen 1100, rating 1315): scored 48%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 48%
+Generation 1103: champion rating 1300 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 47%, rating predicts 64% | newest rung (gen 1100, rating 1315): scored 44%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 42%
+Generation 1104: champion rating 1340 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 59%, rating predicts 69% | newest rung (gen 1100, rating 1315): scored 59%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1105: champion rating 1311 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 59%, rating predicts 66% | newest rung (gen 1100, rating 1315): scored 46%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1106: champion rating 1335 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 48%, rating predicts 69% | newest rung (gen 1100, rating 1315): scored 76%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 11%
+Generation 1107: champion rating 1304 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 54%, rating predicts 65% | newest rung (gen 1100, rating 1315): scored 34%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1108: champion rating 1296 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 44%, rating predicts 64% | newest rung (gen 1100, rating 1315): scored 42%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 20%
+Generation 1109: champion rating 1306 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 21%, rating predicts 65% | newest rung (gen 1100, rating 1315): scored 58%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1110: champion rating 1296 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 36%, rating predicts 64% | newest rung (gen 1100, rating 1315): scored 32%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 8%
+Generation 1111: champion rating 1314 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 24%, rating predicts 66% | newest rung (gen 1110, rating 1296): scored 33%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 36%
+Generation 1112: champion rating 1318 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 65%, rating predicts 67% | newest rung (gen 1070, rating 1312): scored 56%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1113: champion rating 1316 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 61%, rating predicts 66% | newest rung (gen 1110, rating 1296): scored 45%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 35%
+Generation 1114: champion rating 1327 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 68%, rating predicts 68% | newest rung (gen 1110, rating 1296): scored 14%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 22%
+Generation 1115: champion rating 1304 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 88%, rating predicts 65% | newest rung (gen 1070, rating 1312): scored 36%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1116: champion rating 1297 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 67%, rating predicts 64% | newest rung (gen 1110, rating 1296): scored 44%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 31%
+Generation 1117: champion rating 1330 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 85%, rating predicts 68% | newest rung (gen 1070, rating 1312): scored 41%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 1%
+Generation 1118: champion rating 1344 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 69%, rating predicts 70% | newest rung (gen 1070, rating 1312): scored 51%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 14%
+Generation 1119: champion rating 1323 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 44%, rating predicts 67% | newest rung (gen 1110, rating 1296): scored 43%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 42%
+Generation 1120: champion rating 1301 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 53%, rating predicts 64% | newest rung (gen 1110, rating 1296): scored 61%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 37%
+Generation 1121: champion rating 1316 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 61%, rating predicts 66% | newest rung (gen 1120, rating 1301): scored 25%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1122: champion rating 1336 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 75%, rating predicts 69% | newest rung (gen 1120, rating 1301): scored 63%, rating predicts 55%
+  Benchmark: kinematic bot (rating 1327): scored 7%
+Generation 1123: champion rating 1345 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 45%, rating predicts 70% | newest rung (gen 1120, rating 1301): scored 73%, rating predicts 56%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1124: champion rating 1314 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 79%, rating predicts 66% | newest rung (gen 1120, rating 1301): scored 62%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 44%
+Generation 1125: champion rating 1312 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 62%, rating predicts 66% | newest rung (gen 1120, rating 1301): scored 47%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 12%
+Generation 1126: champion rating 1300 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 76%, rating predicts 64% | newest rung (gen 1110, rating 1296): scored 42%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 41%
+Generation 1127: champion rating 1331 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 72%, rating predicts 68% | newest rung (gen 1120, rating 1301): scored 74%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1128: champion rating 1313 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 35%, rating predicts 66% | newest rung (gen 1120, rating 1301): scored 67%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 13%
+Generation 1129: champion rating 1304 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 55%, rating predicts 65% | newest rung (gen 1120, rating 1301): scored 37%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1130: champion rating 1356 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 37%, rating predicts 71% | newest rung (gen 1120, rating 1301): scored 57%, rating predicts 58%
+  Benchmark: kinematic bot (rating 1327): scored 8%
+Generation 1131: champion rating 1299 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 48%, rating predicts 64% | newest rung (gen 1130, rating 1356): scored 71%, rating predicts 42%
+  Benchmark: kinematic bot (rating 1327): scored 63%
+Generation 1132: champion rating 1313 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 69%, rating predicts 66% | newest rung (gen 1130, rating 1356): scored 59%, rating predicts 44%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1133: champion rating 1300 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 21%, rating predicts 64% | newest rung (gen 1130, rating 1356): scored 59%, rating predicts 42%
+  Benchmark: kinematic bot (rating 1327): scored 18%
+Generation 1134: champion rating 1317 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 70%, rating predicts 67% | newest rung (gen 1130, rating 1356): scored 54%, rating predicts 44%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1135: champion rating 1318 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 32%, rating predicts 67% | newest rung (gen 1130, rating 1356): scored 65%, rating predicts 45%
+  Benchmark: kinematic bot (rating 1327): scored 44%
+Generation 1136: champion rating 1326 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 39%, rating predicts 68% | newest rung (gen 1120, rating 1301): scored 66%, rating predicts 54%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1137: champion rating 1301 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 78%, rating predicts 65% | newest rung (gen 1120, rating 1301): scored 42%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1138: champion rating 1319 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 69%, rating predicts 67% | newest rung (gen 1120, rating 1301): scored 62%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1139: champion rating 1296 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 65%, rating predicts 64% | newest rung (gen 1130, rating 1356): scored 51%, rating predicts 41%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1140: champion rating 1321 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 42%, rating predicts 67% | newest rung (gen 1120, rating 1301): scored 71%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 19%
+Generation 1141: champion rating 1288 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 79%, rating predicts 63% | newest rung (gen 1120, rating 1301): scored 55%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 26%
+Generation 1142: champion rating 1314 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 56%, rating predicts 66% | newest rung (gen 1140, rating 1321): scored 41%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 32%
+Generation 1143: champion rating 1326 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 58%, rating predicts 68% | newest rung (gen 1140, rating 1321): scored 58%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1144: champion rating 1313 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 52%, rating predicts 66% | newest rung (gen 1140, rating 1321): scored 42%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 25%
+Generation 1145: champion rating 1333 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 72%, rating predicts 69% | newest rung (gen 1140, rating 1321): scored 64%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 39%
+Generation 1146: champion rating 1306 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 51%, rating predicts 65% | newest rung (gen 1140, rating 1321): scored 57%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 36%
+Generation 1147: champion rating 1319 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 73%, rating predicts 67% | newest rung (gen 1140, rating 1321): scored 62%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 38%
+Generation 1148: champion rating 1322 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 48%, rating predicts 67% | newest rung (gen 1120, rating 1301): scored 55%, rating predicts 53%
+  Benchmark: kinematic bot (rating 1327): scored 33%
+Generation 1149: champion rating 1307 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 71%, rating predicts 65% | newest rung (gen 1140, rating 1321): scored 33%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 58%
+Generation 1150: champion rating 1320 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 57%, rating predicts 67% | newest rung (gen 1140, rating 1321): scored 74%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 24%
+Generation 1151: champion rating 1308 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 32%, rating predicts 65% | newest rung (gen 1150, rating 1320): scored 30%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 10%
+Generation 1152: champion rating 1298 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 44%, rating predicts 64% | newest rung (gen 1150, rating 1320): scored 73%, rating predicts 47%
+  Benchmark: kinematic bot (rating 1327): scored 23%
+Generation 1153: champion rating 1310 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 55%, rating predicts 66% | newest rung (gen 1150, rating 1320): scored 71%, rating predicts 49%
+  Benchmark: kinematic bot (rating 1327): scored 31%
+Generation 1154: champion rating 1321 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 55%, rating predicts 67% | newest rung (gen 1150, rating 1320): scored 54%, rating predicts 50%
+  Benchmark: kinematic bot (rating 1327): scored 29%
+Generation 1155: champion rating 1333 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 41%, rating predicts 69% | newest rung (gen 1150, rating 1320): scored 62%, rating predicts 52%
+  Benchmark: kinematic bot (rating 1327): scored 44%
+Generation 1156: champion rating 1325 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 49%, rating predicts 68% | newest rung (gen 1150, rating 1320): scored 63%, rating predicts 51%
+  Benchmark: kinematic bot (rating 1327): scored 17%
+Generation 1157: champion rating 1305 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1010, rating 1198): scored 50%, rating predicts 65% | newest rung (gen 1150, rating 1320): scored 30%, rating predicts 48%
+  Benchmark: kinematic bot (rating 1327): scored 46%
