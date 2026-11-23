@@ -107,9 +107,24 @@ map to PufferLib's `[forward, backward, jump]` buttons: `LEFT` (away from the
 net), `RIGHT` (toward the net), `UP`, and `NOTHING`. Serves are launched with a
 random velocity, and each batch gets a fresh seed.
 
-### Kinematic bot benchmark
+### Benchmark bot
 
-`kinematic_bot.py` is a scripted player that every generation also plays
+Every generation also plays a fixed scripted opponent, chosen by
+`BENCHMARK_BOT_POLICY` in `train_agent_genetic.py`. It is currently PufferLib's
+own built-in bot, ported to NumPy as `pufferlib_bot_buttons` in
+`puffer_arena.py` so it can play either side in two-player games. It moves
+along a linear function of its own position, the ball's position and the
+ball's horizontal speed, and always holds jump, so it presses move and jump
+together, which the networks' four actions cannot. Over 200 episodes against
+two champions the port gave exactly the same point totals as PufferLib's C
+version.
+
+Training against the kinematic bot below made champions exploit its fixed
+habits: their score against it rose from 0.31 to 0.86 while their score against
+PufferLib's bot fell from 0.19 to 0.09. The kinematic bot is kept in the
+code but no longer used in training.
+
+`kinematic_bot.py` is a scripted player that the previous runs trained
 against. When the ball is heading toward it, it simulates the ball's flight
 with PufferLib's gravity, speed cap, walls and net to predict where the ball
 comes down to slime height. If that point is on its side, it moves to stand

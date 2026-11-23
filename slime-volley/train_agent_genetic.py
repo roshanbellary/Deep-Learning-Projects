@@ -16,7 +16,7 @@ import torch
 from tqdm import tqdm
 
 from .agent_genetic import INITIAL_RATING, GeneticAgent, reserve_agent_ids_through
-from .puffer_arena import DRAW, KINEMATIC_BOT, POINTS_TO_WIN, WIN, play_matches
+from .puffer_arena import DRAW, PUFFERLIB_BOT, POINTS_TO_WIN, WIN, play_matches
 
 CHAMPION_PATH = Path(__file__).resolve().parent / "champions" / "agent_genetic_gen_1000.pth"
 TOP_AGENTS_DIRECTORY = Path(__file__).resolve().parent / "champions" / "top_agents"
@@ -39,6 +39,8 @@ LADDER_ROUND_ROBIN_GAMES_PER_PAIR = 20
 LADDER_ROUND_ROBIN_MAX_PLAYERS = 25
 RANDOM_ANCHOR_GENERATION = 0
 RANDOM_ANCHOR_SEED = 0
+BENCHMARK_BOT_POLICY = PUFFERLIB_BOT
+BENCHMARK_BOT_NAME = "PufferLib bot"
 BOT_AGENT_ID = -1
 BOT_GENERATION = -1
 BOT_CALIBRATION_GAMES_PER_ANCHOR = 40
@@ -279,7 +281,7 @@ def _bootstrap_anchors() -> List[FrozenOpponent]:
 
 
 def calibrate_bot_rating(worker_pool, games_per_anchor: int = BOT_CALIBRATION_GAMES_PER_ANCHOR, points_to_win: int = POINTS_TO_WIN) -> float:
-    bot_player = ScriptedPlayer(agent_id=BOT_AGENT_ID, policy=KINEMATIC_BOT)
+    bot_player = ScriptedPlayer(agent_id=BOT_AGENT_ID, policy=BENCHMARK_BOT_POLICY)
     _rate_against_opponents(
         worker_pool, [bot_player], _bootstrap_anchors(), games_per_anchor, points_to_win, progress_label="bot calibration"
     )
@@ -287,7 +289,7 @@ def calibrate_bot_rating(worker_pool, games_per_anchor: int = BOT_CALIBRATION_GA
 
 
 def _bot_opponent(bot_rating: float) -> FrozenOpponent:
-    return FrozenOpponent(agent_id=BOT_AGENT_ID, generation=BOT_GENERATION, weights=KINEMATIC_BOT, rating=bot_rating)
+    return FrozenOpponent(agent_id=BOT_AGENT_ID, generation=BOT_GENERATION, weights=BENCHMARK_BOT_POLICY, rating=bot_rating)
 
 
 def _bot_report(champion_records: List[OpponentRecord]) -> Optional[str]:
@@ -295,7 +297,7 @@ def _bot_report(champion_records: List[OpponentRecord]) -> Optional[str]:
     if not bot_records:
         return None
     bot_record = bot_records[0]
-    return f"kinematic bot (rating {bot_record.opponent_rating:.0f}): scored {bot_record.average_score:.0%}"
+    return f"{BENCHMARK_BOT_NAME} (rating {bot_record.opponent_rating:.0f}): scored {bot_record.average_score:.0%}"
 
 
 def _rerate_seed_agents_against_bot(
@@ -310,7 +312,7 @@ def _rerate_seed_agents_against_bot(
     seed_generation = seed_members[0].generation
     progress.recent_generations[0] = [_freeze(agent, seed_generation) for agent in seed_agents]
     ratings = ", ".join(f"{agent.rating:.0f}" for agent in seed_agents)
-    print(f"Seed agents re-rated against the kinematic bot: {ratings}")
+    print(f"Seed agents re-rated against the {BENCHMARK_BOT_NAME}: {ratings}")
 
 
 def _build_opponent_pool(
@@ -462,7 +464,7 @@ def rate_ladder(
     saved_rungs = _evenly_spaced(_load_ladder_checkpoints(ladder_directory), max_players - SCRIPTED_LADDER_PLAYER_COUNT)
     if not saved_rungs:
         return []
-    players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights()), (BOT_GENERATION, KINEMATIC_BOT)] + saved_rungs
+    players = [(RANDOM_ANCHOR_GENERATION, _seeded_random_agent_weights()), (BOT_GENERATION, BENCHMARK_BOT_POLICY)] + saved_rungs
     weights_by_player_index = {player_index: weights for player_index, (_, weights) in enumerate(players)}
     scheduled_games = [
         (first_index, second_index, _agent_plays_left(game_number))
@@ -692,7 +694,7 @@ def train(
     with multiprocessing_context.Pool(processes=NUM_WORKERS) as worker_pool:
         if progress.bot_rating is None:
             progress.bot_rating = calibrate_bot_rating(worker_pool, points_to_win=points_to_win)
-            print(f"Kinematic bot calibrated at rating {progress.bot_rating:.0f} against random agents at {INITIAL_RATING:.0f}")
+            print(f"{BENCHMARK_BOT_NAME} calibrated at rating {progress.bot_rating:.0f} against random agents at {INITIAL_RATING:.0f}")
         bot_opponent = _bot_opponent(progress.bot_rating)
         if seed_agents_directory is not None and not resume:
             _rerate_seed_agents_against_bot(worker_pool, progress, bot_opponent, points_to_win)

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Callable, Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 from threadpoolctl import threadpool_limits
@@ -22,7 +22,19 @@ LEFT_WON_POINT_REWARD = 1.0
 RIGHT_WON_POINT_REWARD = -1.0
 RETURN_OVER_NET_REWARD = 0.01
 KINEMATIC_BOT = "kinematic_bot"
+PUFFERLIB_BOT = "pufferlib_bot"
 NO_SIDE = 0
+
+PUFFERLIB_BOT_OWN_X_WEIGHT = -23.757145
+PUFFERLIB_BOT_BALL_X_WEIGHT = 23.206863
+PUFFERLIB_BOT_BALL_VX_WEIGHT = 0.7943352
+PUFFERLIB_BOT_BACKWARD_BIAS = 1.4617119
+PUFFERLIB_BOT_FORWARD_FROM_BACKWARD = -64.6463748
+PUFFERLIB_BOT_FORWARD_BIAS = 22.4668393
+BUTTON_COUNT = 3
+FORWARD_BUTTON = 0
+BACKWARD_BUTTON = 1
+JUMP_BUTTON = 2
 
 NOTHING_ACTION_INDEX = 3
 FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX = np.array(
@@ -38,6 +50,7 @@ Pairing = Tuple[int, int]
 ModelWeights = Dict[str, Tensor]
 Policy = Union[ModelWeights, str]
 NumpyLayer = Tuple[np.ndarray, np.ndarray]
+ButtonPolicy = Callable[[np.ndarray], np.ndarray]
 
 
 def _numpy_layers(model_weights: ModelWeights) -> List[NumpyLayer]:
@@ -59,17 +72,47 @@ def _action_logits(layers: List[NumpyLayer], observations: np.ndarray) -> np.nda
     return activations @ output_weights + output_biases
 
 
-def _layers_or_bot(policy: Policy) -> Optional[List[NumpyLayer]]:
+def pufferlib_bot_buttons(observations: np.ndarray) -> np.ndarray:
+    backward_drive = (
+        PUFFERLIB_BOT_OWN_X_WEIGHT * observations[:, kinematic_bot.OWN_X_INDEX]
+        + PUFFERLIB_BOT_BALL_X_WEIGHT * observations[:, kinematic_bot.BALL_X_INDEX]
+        + PUFFERLIB_BOT_BALL_VX_WEIGHT * observations[:, kinematic_bot.BALL_VX_INDEX]
+        + PUFFERLIB_BOT_BACKWARD_BIAS
+    )
+    forward_drive = PUFFERLIB_BOT_FORWARD_FROM_BACKWARD * backward_drive + PUFFERLIB_BOT_FORWARD_BIAS
+    buttons = np.zeros((len(observations), BUTTON_COUNT), dtype=int)
+    buttons[:, FORWARD_BUTTON] = forward_drive > 0
+    buttons[:, BACKWARD_BUTTON] = backward_drive > 0
+    buttons[:, JUMP_BUTTON] = 1
+    return buttons
+
+
+def kinematic_bot_buttons(observations: np.ndarray) -> np.ndarray:
+    return FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[kinematic_bot.choose_actions(observations)]
+
+
+SCRIPTED_BUTTON_POLICIES: Dict[str, ButtonPolicy] = {
+    KINEMATIC_BOT: kinematic_bot_buttons,
+    PUFFERLIB_BOT: pufferlib_bot_buttons,
+}
+
+
+def _network_button_policy(model_weights: ModelWeights) -> ButtonPolicy:
+    layers = _numpy_layers(model_weights)
+    return lambda observations: FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[_action_logits(layers, observations).argmax(axis=1)]
+
+
+def _button_policy(policy: Policy) -> ButtonPolicy:
     if isinstance(policy, str):
-        if policy != KINEMATIC_BOT:
+        if policy not in SCRIPTED_BUTTON_POLICIES:
             raise ValueError(f"Unknown scripted policy: {policy!r}")
-        return None
-    return _numpy_layers(policy)
+        return SCRIPTED_BUTTON_POLICIES[policy]
+    return _network_button_policy(policy)
 
 
 class PolicyGroups:
     def __init__(self, policy_weights: Sequence[Policy], policy_index_by_slot: Sequence[int]):
-        self.layers_by_policy = [_layers_or_bot(policy) for policy in policy_weights]
+        self.button_policies = [_button_policy(policy) for policy in policy_weights]
         self.policy_index_by_slot = np.asarray(policy_index_by_slot)
         self.groups: List[Tuple[int, np.ndarray]] = []
         self.set_active_slots(np.arange(len(self.policy_index_by_slot)))
@@ -88,13 +131,9 @@ class PolicyGroups:
             for start, end in zip(group_starts, group_ends)
         ]
 
-    def fill_action_indices(self, observations: np.ndarray, action_indices: np.ndarray):
+    def fill_buttons(self, observations: np.ndarray, buttons: np.ndarray):
         for policy_index, slots in self.groups:
-            layers = self.layers_by_policy[policy_index]
-            if layers is None:
-                action_indices[slots] = kinematic_bot.choose_actions(observations[slots])
-            else:
-                action_indices[slots] = _action_logits(layers, observations[slots]).argmax(axis=1)
+            buttons[slots] = self.button_policies[policy_index](observations[slots])
 
 
 def _left_share_of_reward(left_reward: float, right_reward: float) -> float:
@@ -133,7 +172,7 @@ def _play_matches_single_threaded(
     environment = PufferSlimeVolley(num_envs=len(pairings), num_agents=AGENTS_PER_MATCH)
     observations, _ = environment.reset(seed=seed)
 
-    action_indices = np.full(len(policy_index_by_slot), NOTHING_ACTION_INDEX)
+    buttons = np.zeros((len(policy_index_by_slot), BUTTON_COUNT), dtype=int)
     left_points_won = np.zeros(len(pairings), dtype=int)
     right_points_won = np.zeros(len(pairings), dtype=int)
     left_returns = np.zeros(len(pairings), dtype=int)
@@ -141,8 +180,8 @@ def _play_matches_single_threaded(
     last_ball_side = np.full(len(pairings), NO_SIDE)
     match_finished = np.zeros(len(pairings), dtype=bool)
     while not match_finished.all():
-        policies.fill_action_indices(observations, action_indices)
-        observations, rewards, terminals, _, _ = environment.step(FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[action_indices])
+        policies.fill_buttons(observations, buttons)
+        observations, rewards, terminals, _, _ = environment.step(buttons)
         still_playing = ~match_finished
         left_rewards = rewards[LEFT_SLOT::AGENTS_PER_MATCH]
         point_scored = left_rewards != 0
@@ -160,7 +199,7 @@ def _play_matches_single_threaded(
         newly_finished = still_playing & (someone_reached_target | episode_ended)
         if newly_finished.any():
             match_finished |= newly_finished
-            action_indices[np.repeat(match_finished, AGENTS_PER_MATCH)] = NOTHING_ACTION_INDEX
+            buttons[np.repeat(match_finished, AGENTS_PER_MATCH)] = FORWARD_BACKWARD_JUMP_BY_ACTION_INDEX[NOTHING_ACTION_INDEX]
             policies.set_active_slots(_slots_of_unfinished_matches(match_finished))
     environment.close()
     left_reward = left_points_won + RETURN_OVER_NET_REWARD * left_returns
