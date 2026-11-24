@@ -1,0 +1,869 @@
+PufferLib bot calibrated at rating 1872 against random agents at 1000
+Seed agents re-rated against the PufferLib bot: 1602, 1660, 1567, 1612, 1658
+Generation 1658: champion rating 1670 against 6 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1659: champion rating 1664 against 11 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1660: champion rating 1679 against 16 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1661: champion rating 1695 against 21 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 77%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1662: champion rating 1696 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 42%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1663: champion rating 1679 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 71%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 25%
+Generation 1664: champion rating 1686 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 56%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 25%
+Generation 1665: champion rating 1708 against 26 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 64%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 27%
+Generation 1666: champion rating 1682 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 47%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 23%
+Generation 1667: champion rating 1691 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 58%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 28%
+Generation 1668: champion rating 1700 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 55%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1669: champion rating 1732 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 63%, rating predicts 58%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1670: champion rating 1731 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 51%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1671: champion rating 1733 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 48%, rating predicts 58% | newest rung (gen 1670, rating 1731): scored 41%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1672: champion rating 1705 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 54% | newest rung (gen 1670, rating 1731): scored 38%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1673: champion rating 1732 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 58% | newest rung (gen 1670, rating 1731): scored 37%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1674: champion rating 1722 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: only rung (gen 1660, rating 1679): scored 71%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1675: champion rating 1692 against 27 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 52% | newest rung (gen 1670, rating 1731): scored 35%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 24%
+Generation 1676: champion rating 1713 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 55% | newest rung (gen 1670, rating 1731): scored 69%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1677: champion rating 1708 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 54% | newest rung (gen 1670, rating 1731): scored 46%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1678: champion rating 1710 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 45%, rating predicts 54% | newest rung (gen 1670, rating 1731): scored 41%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1679: champion rating 1726 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 57% | newest rung (gen 1670, rating 1731): scored 8%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1680: champion rating 1710 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 46%, rating predicts 54% | newest rung (gen 1670, rating 1731): scored 81%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 25%
+Generation 1681: champion rating 1718 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 59%, rating predicts 56% | newest rung (gen 1680, rating 1710): scored 59%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1682: champion rating 1739 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 49%, rating predicts 59% | newest rung (gen 1680, rating 1710): scored 41%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1683: champion rating 1714 against 28 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 55% | newest rung (gen 1680, rating 1710): scored 49%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 27%
+Generation 1684: champion rating 1706 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 54% | newest rung (gen 1670, rating 1731): scored 54%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 26%
+Generation 1685: champion rating 1703 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 53% | newest rung (gen 1680, rating 1710): scored 33%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 24%
+Generation 1686: champion rating 1716 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 55% | newest rung (gen 1670, rating 1731): scored 39%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1687: champion rating 1734 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 58% | newest rung (gen 1680, rating 1710): scored 75%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1688: champion rating 1712 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 55% | newest rung (gen 1680, rating 1710): scored 17%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1689: champion rating 1751 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 82%, rating predicts 60% | newest rung (gen 1680, rating 1710): scored 57%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1690: champion rating 1754 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 76%, rating predicts 61% | newest rung (gen 1680, rating 1710): scored 74%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1691: champion rating 1727 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 57% | newest rung (gen 1690, rating 1754): scored 39%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1692: champion rating 1749 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 60% | newest rung (gen 1690, rating 1754): scored 56%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1693: champion rating 1762 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 62% | newest rung (gen 1690, rating 1754): scored 30%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1694: champion rating 1782 against 29 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 44%, rating predicts 64% | newest rung (gen 1690, rating 1754): scored 46%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1695: champion rating 1770 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 58%, rating predicts 63% | newest rung (gen 1690, rating 1754): scored 59%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1696: champion rating 1779 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 64% | newest rung (gen 1690, rating 1754): scored 78%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1697: champion rating 1750 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 60% | newest rung (gen 1690, rating 1754): scored 58%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1698: champion rating 1783 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 30%, rating predicts 65% | newest rung (gen 1690, rating 1754): scored 54%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1699: champion rating 1756 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 95%, rating predicts 61% | newest rung (gen 1690, rating 1754): scored 43%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1700: champion rating 1775 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 64% | newest rung (gen 1690, rating 1754): scored 54%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1701: champion rating 1764 against 30 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 57%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1702: champion rating 1763 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 47%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1703: champion rating 1775 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 63% | newest rung (gen 1700, rating 1775): scored 60%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1704: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 51%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1705: champion rating 1772 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 80%, rating predicts 63% | newest rung (gen 1700, rating 1775): scored 71%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1706: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 82%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 62%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1707: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 49%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 48%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1708: champion rating 1795 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 66% | newest rung (gen 1700, rating 1775): scored 49%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1709: champion rating 1765 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 76%, rating predicts 62% | newest rung (gen 1700, rating 1775): scored 36%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1710: champion rating 1771 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 14%, rating predicts 63% | newest rung (gen 1700, rating 1775): scored 15%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1711: champion rating 1784 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 65% | newest rung (gen 1710, rating 1771): scored 58%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 46%
+Generation 1712: champion rating 1757 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 61% | newest rung (gen 1710, rating 1771): scored 62%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1713: champion rating 1803 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 67% | newest rung (gen 1710, rating 1771): scored 63%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1714: champion rating 1788 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 65% | newest rung (gen 1710, rating 1771): scored 79%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1715: champion rating 1771 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 63% | newest rung (gen 1710, rating 1771): scored 45%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1716: champion rating 1785 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 33%, rating predicts 65% | newest rung (gen 1710, rating 1771): scored 63%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1717: champion rating 1807 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 68%, rating predicts 68% | newest rung (gen 1710, rating 1771): scored 55%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1718: champion rating 1771 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 63% | newest rung (gen 1710, rating 1771): scored 24%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1719: champion rating 1801 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 76%, rating predicts 67% | newest rung (gen 1710, rating 1771): scored 54%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1720: champion rating 1777 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 64% | newest rung (gen 1710, rating 1771): scored 58%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1721: champion rating 1780 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 64% | newest rung (gen 1710, rating 1771): scored 25%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1722: champion rating 1775 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 63% | newest rung (gen 1710, rating 1771): scored 47%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1723: champion rating 1781 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 42%, rating predicts 64% | newest rung (gen 1720, rating 1777): scored 32%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1724: champion rating 1770 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 80%, rating predicts 63% | newest rung (gen 1720, rating 1777): scored 57%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1725: champion rating 1805 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 67% | newest rung (gen 1710, rating 1771): scored 49%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 49%
+Generation 1726: champion rating 1778 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 64% | newest rung (gen 1720, rating 1777): scored 49%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1727: champion rating 1754 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 61% | newest rung (gen 1720, rating 1777): scored 49%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1728: champion rating 1768 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 59%, rating predicts 63% | newest rung (gen 1710, rating 1771): scored 63%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1729: champion rating 1758 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 59%, rating predicts 61% | newest rung (gen 1720, rating 1777): scored 48%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1730: champion rating 1808 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 68% | newest rung (gen 1720, rating 1777): scored 59%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1731: champion rating 1741 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 41%, rating predicts 59% | newest rung (gen 1730, rating 1808): scored 62%, rating predicts 40%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1732: champion rating 1760 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 62% | newest rung (gen 1730, rating 1808): scored 36%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1733: champion rating 1767 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 68%, rating predicts 62% | newest rung (gen 1730, rating 1808): scored 26%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1734: champion rating 1798 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 66% | newest rung (gen 1730, rating 1808): scored 63%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1735: champion rating 1770 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 31%, rating predicts 63% | newest rung (gen 1730, rating 1808): scored 49%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1736: champion rating 1762 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 42%, rating predicts 62% | newest rung (gen 1730, rating 1808): scored 30%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 48%
+Generation 1737: champion rating 1806 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 67% | newest rung (gen 1730, rating 1808): scored 61%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1738: champion rating 1785 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 65% | newest rung (gen 1730, rating 1808): scored 55%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1739: champion rating 1751 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 60% | newest rung (gen 1730, rating 1808): scored 41%, rating predicts 42%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1740: champion rating 1825 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 78%, rating predicts 70% | newest rung (gen 1730, rating 1808): scored 58%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1741: champion rating 1778 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 79%, rating predicts 64% | newest rung (gen 1740, rating 1825): scored 44%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1742: champion rating 1799 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 67% | newest rung (gen 1740, rating 1825): scored 29%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 47%
+Generation 1743: champion rating 1771 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 63% | newest rung (gen 1730, rating 1808): scored 72%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1744: champion rating 1767 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 62% | newest rung (gen 1740, rating 1825): scored 62%, rating predicts 42%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1745: champion rating 1767 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 33%, rating predicts 62% | newest rung (gen 1730, rating 1808): scored 43%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1746: champion rating 1818 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 69% | newest rung (gen 1740, rating 1825): scored 43%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 51%
+Generation 1747: champion rating 1769 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 63% | newest rung (gen 1730, rating 1808): scored 51%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1748: champion rating 1768 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 63% | newest rung (gen 1730, rating 1808): scored 58%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1749: champion rating 1777 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 90%, rating predicts 64% | newest rung (gen 1730, rating 1808): scored 54%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1750: champion rating 1814 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 69% | newest rung (gen 1740, rating 1825): scored 52%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 50%
+Generation 1751: champion rating 1754 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 61% | newest rung (gen 1750, rating 1814): scored 48%, rating predicts 41%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1752: champion rating 1803 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 81%, rating predicts 67% | newest rung (gen 1750, rating 1814): scored 70%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1753: champion rating 1791 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 66% | newest rung (gen 1750, rating 1814): scored 40%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1754: champion rating 1788 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 41%, rating predicts 65% | newest rung (gen 1750, rating 1814): scored 62%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1755: champion rating 1781 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 87%, rating predicts 64% | newest rung (gen 1750, rating 1814): scored 57%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1756: champion rating 1798 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 67% | newest rung (gen 1750, rating 1814): scored 43%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1757: champion rating 1819 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 69% | newest rung (gen 1740, rating 1825): scored 43%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 47%
+Generation 1758: champion rating 1767 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 62% | newest rung (gen 1750, rating 1814): scored 43%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1759: champion rating 1786 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 47%, rating predicts 65% | newest rung (gen 1750, rating 1814): scored 63%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1760: champion rating 1767 against 36 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 62% | newest rung (gen 1750, rating 1814): scored 47%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1761: champion rating 1779 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 64% | newest rung (gen 1740, rating 1825): scored 43%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1762: champion rating 1792 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 66% | newest rung (gen 1760, rating 1767): scored 57%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1763: champion rating 1762 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 62% | newest rung (gen 1760, rating 1767): scored 18%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1764: champion rating 1795 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 66% | newest rung (gen 1760, rating 1767): scored 61%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1765: champion rating 1763 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 58%, rating predicts 62% | newest rung (gen 1760, rating 1767): scored 22%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1766: champion rating 1804 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 75%, rating predicts 67% | newest rung (gen 1740, rating 1825): scored 68%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1767: champion rating 1819 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 69% | newest rung (gen 1760, rating 1767): scored 47%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 50%
+Generation 1768: champion rating 1774 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 63% | newest rung (gen 1760, rating 1767): scored 28%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1769: champion rating 1784 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 92%, rating predicts 65% | newest rung (gen 1760, rating 1767): scored 50%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1770: champion rating 1785 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 65% | newest rung (gen 1740, rating 1825): scored 52%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1771: champion rating 1795 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 66% | newest rung (gen 1740, rating 1825): scored 46%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1772: champion rating 1788 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 37%, rating predicts 65% | newest rung (gen 1770, rating 1785): scored 39%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1773: champion rating 1780 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 48%, rating predicts 64% | newest rung (gen 1770, rating 1785): scored 27%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1774: champion rating 1818 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 64%, rating predicts 69% | newest rung (gen 1770, rating 1785): scored 56%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1775: champion rating 1818 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 69% | newest rung (gen 1770, rating 1785): scored 64%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 50%
+Generation 1776: champion rating 1830 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 71% | newest rung (gen 1770, rating 1785): scored 52%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 51%
+Generation 1777: champion rating 1780 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 75%, rating predicts 64% | newest rung (gen 1770, rating 1785): scored 53%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1778: champion rating 1829 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 84%, rating predicts 70% | newest rung (gen 1770, rating 1785): scored 50%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 49%
+Generation 1779: champion rating 1785 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 65% | newest rung (gen 1770, rating 1785): scored 40%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1780: champion rating 1769 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 32%, rating predicts 63% | newest rung (gen 1770, rating 1785): scored 73%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1781: champion rating 1790 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 65% | newest rung (gen 1780, rating 1769): scored 35%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1782: champion rating 1768 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 63% | newest rung (gen 1780, rating 1769): scored 74%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1783: champion rating 1770 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 63% | newest rung (gen 1780, rating 1769): scored 83%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1784: champion rating 1785 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 65% | newest rung (gen 1780, rating 1769): scored 71%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1785: champion rating 1781 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 64% | newest rung (gen 1770, rating 1785): scored 35%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1786: champion rating 1807 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 75%, rating predicts 68% | newest rung (gen 1780, rating 1769): scored 66%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1787: champion rating 1782 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 64% | newest rung (gen 1780, rating 1769): scored 50%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1788: champion rating 1770 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 36%, rating predicts 63% | newest rung (gen 1780, rating 1769): scored 79%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1789: champion rating 1757 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 61% | newest rung (gen 1780, rating 1769): scored 65%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1790: champion rating 1808 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 80%, rating predicts 68% | newest rung (gen 1780, rating 1769): scored 38%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 50%
+Generation 1791: champion rating 1762 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 91%, rating predicts 62% | newest rung (gen 1790, rating 1808): scored 64%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1792: champion rating 1799 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 67% | newest rung (gen 1790, rating 1808): scored 79%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1793: champion rating 1756 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 43%, rating predicts 61% | newest rung (gen 1790, rating 1808): scored 79%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1794: champion rating 1784 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 65% | newest rung (gen 1790, rating 1808): scored 82%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1795: champion rating 1762 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 62% | newest rung (gen 1790, rating 1808): scored 84%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1796: champion rating 1760 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 62% | newest rung (gen 1790, rating 1808): scored 60%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1797: champion rating 1819 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 69% | newest rung (gen 1790, rating 1808): scored 53%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1798: champion rating 1784 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 65% | newest rung (gen 1790, rating 1808): scored 62%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1799: champion rating 1765 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 62% | newest rung (gen 1790, rating 1808): scored 82%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1800: champion rating 1783 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 64%, rating predicts 65% | newest rung (gen 1790, rating 1808): scored 56%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1801: champion rating 1805 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 44%, rating predicts 67% | newest rung (gen 1800, rating 1783): scored 50%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1802: champion rating 1766 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 62% | newest rung (gen 1800, rating 1783): scored 64%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1803: champion rating 1794 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 66% | newest rung (gen 1800, rating 1783): scored 70%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1804: champion rating 1783 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 65% | newest rung (gen 1800, rating 1783): scored 81%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1805: champion rating 1755 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 61% | newest rung (gen 1800, rating 1783): scored 37%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1806: champion rating 1765 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 53%, rating predicts 62% | newest rung (gen 1800, rating 1783): scored 53%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1807: champion rating 1798 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 67% | newest rung (gen 1800, rating 1783): scored 58%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1808: champion rating 1780 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 64% | newest rung (gen 1800, rating 1783): scored 52%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1809: champion rating 1801 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 67% | newest rung (gen 1800, rating 1783): scored 50%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1810: champion rating 1794 against 35 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 67%, rating predicts 66% | newest rung (gen 1800, rating 1783): scored 55%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1811: champion rating 1798 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 84%, rating predicts 66% | newest rung (gen 1810, rating 1794): scored 53%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1812: champion rating 1803 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 67% | newest rung (gen 1810, rating 1794): scored 67%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1813: champion rating 1791 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 66% | newest rung (gen 1810, rating 1794): scored 73%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1814: champion rating 1796 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 44%, rating predicts 66% | newest rung (gen 1810, rating 1794): scored 60%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1815: champion rating 1789 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 65% | newest rung (gen 1810, rating 1794): scored 60%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1816: champion rating 1796 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 66% | newest rung (gen 1810, rating 1794): scored 52%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1817: champion rating 1783 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 64% | newest rung (gen 1810, rating 1794): scored 31%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1818: champion rating 1779 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 64% | newest rung (gen 1810, rating 1794): scored 50%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1819: champion rating 1784 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 65% | newest rung (gen 1810, rating 1794): scored 43%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1820: champion rating 1779 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 64% | newest rung (gen 1810, rating 1794): scored 37%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1821: champion rating 1796 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 66% | newest rung (gen 1810, rating 1794): scored 39%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1822: champion rating 1805 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 67% | newest rung (gen 1820, rating 1779): scored 38%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1823: champion rating 1826 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 94%, rating predicts 70% | newest rung (gen 1820, rating 1779): scored 66%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1824: champion rating 1822 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 69% | newest rung (gen 1820, rating 1779): scored 29%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1825: champion rating 1769 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 63% | newest rung (gen 1820, rating 1779): scored 61%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1826: champion rating 1787 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 65% | newest rung (gen 1820, rating 1779): scored 59%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1827: champion rating 1803 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 67% | newest rung (gen 1810, rating 1794): scored 62%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1828: champion rating 1800 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 67% | newest rung (gen 1820, rating 1779): scored 43%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1829: champion rating 1802 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 67% | newest rung (gen 1820, rating 1779): scored 63%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1830: champion rating 1797 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 48%, rating predicts 66% | newest rung (gen 1820, rating 1779): scored 61%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1831: champion rating 1830 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 42%, rating predicts 70% | newest rung (gen 1820, rating 1779): scored 58%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 51%
+Generation 1832: champion rating 1787 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 65% | newest rung (gen 1830, rating 1797): scored 64%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1833: champion rating 1801 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 53%, rating predicts 67% | newest rung (gen 1830, rating 1797): scored 20%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1834: champion rating 1786 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 65% | newest rung (gen 1830, rating 1797): scored 55%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1835: champion rating 1797 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 66% | newest rung (gen 1830, rating 1797): scored 56%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1836: champion rating 1788 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 65% | newest rung (gen 1830, rating 1797): scored 69%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1837: champion rating 1793 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 66% | newest rung (gen 1830, rating 1797): scored 35%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1838: champion rating 1799 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 90%, rating predicts 67% | newest rung (gen 1830, rating 1797): scored 59%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1839: champion rating 1766 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 62% | newest rung (gen 1830, rating 1797): scored 59%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1840: champion rating 1771 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 63% | newest rung (gen 1830, rating 1797): scored 39%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1841: champion rating 1808 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 68% | newest rung (gen 1840, rating 1771): scored 50%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1842: champion rating 1817 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 69% | newest rung (gen 1840, rating 1771): scored 69%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1843: champion rating 1772 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 63% | newest rung (gen 1840, rating 1771): scored 29%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1844: champion rating 1792 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 79%, rating predicts 66% | newest rung (gen 1840, rating 1771): scored 31%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1845: champion rating 1797 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 66% | newest rung (gen 1840, rating 1771): scored 61%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1846: champion rating 1765 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 59%, rating predicts 62% | newest rung (gen 1840, rating 1771): scored 62%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1847: champion rating 1776 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 64% | newest rung (gen 1840, rating 1771): scored 67%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1848: champion rating 1791 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 66% | newest rung (gen 1840, rating 1771): scored 72%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1849: champion rating 1772 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 63% | newest rung (gen 1830, rating 1797): scored 79%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1850: champion rating 1786 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 65% | newest rung (gen 1840, rating 1771): scored 71%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1851: champion rating 1805 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 68%, rating predicts 67% | newest rung (gen 1850, rating 1786): scored 53%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1852: champion rating 1781 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 64% | newest rung (gen 1850, rating 1786): scored 46%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1853: champion rating 1817 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 68%, rating predicts 69% | newest rung (gen 1850, rating 1786): scored 74%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1854: champion rating 1803 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 67% | newest rung (gen 1850, rating 1786): scored 58%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1855: champion rating 1791 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 97%, rating predicts 66% | newest rung (gen 1850, rating 1786): scored 49%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1856: champion rating 1753 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 83%, rating predicts 61% | newest rung (gen 1850, rating 1786): scored 71%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 27%
+Generation 1857: champion rating 1774 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 63% | newest rung (gen 1850, rating 1786): scored 38%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1858: champion rating 1796 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 66% | newest rung (gen 1850, rating 1786): scored 69%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1859: champion rating 1781 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 64% | newest rung (gen 1850, rating 1786): scored 34%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1860: champion rating 1776 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 76%, rating predicts 64% | newest rung (gen 1840, rating 1771): scored 54%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1861: champion rating 1828 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 50%, rating predicts 70% | newest rung (gen 1860, rating 1776): scored 47%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 52%
+Generation 1862: champion rating 1747 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 60% | newest rung (gen 1860, rating 1776): scored 63%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1863: champion rating 1768 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 88%, rating predicts 62% | newest rung (gen 1860, rating 1776): scored 52%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1864: champion rating 1790 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 93%, rating predicts 65% | newest rung (gen 1860, rating 1776): scored 36%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1865: champion rating 1760 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 62% | newest rung (gen 1840, rating 1771): scored 61%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1866: champion rating 1771 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 63% | newest rung (gen 1860, rating 1776): scored 69%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1867: champion rating 1802 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 65%, rating predicts 67% | newest rung (gen 1840, rating 1771): scored 51%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1868: champion rating 1793 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 66% | newest rung (gen 1860, rating 1776): scored 43%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1869: champion rating 1808 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 68% | newest rung (gen 1840, rating 1771): scored 41%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1870: champion rating 1772 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 81%, rating predicts 63% | newest rung (gen 1860, rating 1776): scored 73%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1871: champion rating 1808 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 68% | newest rung (gen 1870, rating 1772): scored 40%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 47%
+Generation 1872: champion rating 1775 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 67%, rating predicts 63% | newest rung (gen 1870, rating 1772): scored 40%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1873: champion rating 1770 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 76%, rating predicts 63% | newest rung (gen 1860, rating 1776): scored 41%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1874: champion rating 1774 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 63% | newest rung (gen 1870, rating 1772): scored 58%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1875: champion rating 1781 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 64% | newest rung (gen 1870, rating 1772): scored 37%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1876: champion rating 1750 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 40%, rating predicts 60% | newest rung (gen 1860, rating 1776): scored 51%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1877: champion rating 1746 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 60% | newest rung (gen 1870, rating 1772): scored 60%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1878: champion rating 1747 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 78%, rating predicts 60% | newest rung (gen 1870, rating 1772): scored 40%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1879: champion rating 1786 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 65% | newest rung (gen 1870, rating 1772): scored 69%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1880: champion rating 1802 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 78%, rating predicts 67% | newest rung (gen 1870, rating 1772): scored 57%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1881: champion rating 1775 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 63% | newest rung (gen 1880, rating 1802): scored 55%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1882: champion rating 1752 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 60% | newest rung (gen 1880, rating 1802): scored 38%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1883: champion rating 1774 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 63% | newest rung (gen 1880, rating 1802): scored 67%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1884: champion rating 1794 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 56%, rating predicts 66% | newest rung (gen 1880, rating 1802): scored 44%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1885: champion rating 1774 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 59%, rating predicts 63% | newest rung (gen 1870, rating 1772): scored 45%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1886: champion rating 1756 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 61% | newest rung (gen 1870, rating 1772): scored 72%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1887: champion rating 1774 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 57%, rating predicts 63% | newest rung (gen 1880, rating 1802): scored 44%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1888: champion rating 1756 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 94%, rating predicts 61% | newest rung (gen 1880, rating 1802): scored 57%, rating predicts 43%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1889: champion rating 1783 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 65% | newest rung (gen 1870, rating 1772): scored 46%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1890: champion rating 1799 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 67% | newest rung (gen 1880, rating 1802): scored 67%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1891: champion rating 1777 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 38%, rating predicts 64% | newest rung (gen 1890, rating 1799): scored 72%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1892: champion rating 1760 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 64%, rating predicts 61% | newest rung (gen 1890, rating 1799): scored 35%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1893: champion rating 1800 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 66%, rating predicts 67% | newest rung (gen 1890, rating 1799): scored 65%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 44%
+Generation 1894: champion rating 1760 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 61% | newest rung (gen 1890, rating 1799): scored 57%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1895: champion rating 1780 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 64% | newest rung (gen 1880, rating 1802): scored 52%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1896: champion rating 1779 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 64% | newest rung (gen 1890, rating 1799): scored 50%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1897: champion rating 1799 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 92%, rating predicts 67% | newest rung (gen 1880, rating 1802): scored 38%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 42%
+Generation 1898: champion rating 1773 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 63% | newest rung (gen 1880, rating 1802): scored 73%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1899: champion rating 1763 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 74%, rating predicts 62% | newest rung (gen 1890, rating 1799): scored 46%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1900: champion rating 1755 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 83%, rating predicts 61% | newest rung (gen 1890, rating 1799): scored 30%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1901: champion rating 1765 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 81%, rating predicts 62% | newest rung (gen 1900, rating 1755): scored 71%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1902: champion rating 1803 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 67% | newest rung (gen 1900, rating 1755): scored 63%, rating predicts 57%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1903: champion rating 1790 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 83%, rating predicts 65% | newest rung (gen 1900, rating 1755): scored 51%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1904: champion rating 1797 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 66% | newest rung (gen 1900, rating 1755): scored 41%, rating predicts 56%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1905: champion rating 1761 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 64%, rating predicts 62% | newest rung (gen 1900, rating 1755): scored 41%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1906: champion rating 1771 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 63% | newest rung (gen 1900, rating 1755): scored 45%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1907: champion rating 1778 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 68%, rating predicts 64% | newest rung (gen 1900, rating 1755): scored 35%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1908: champion rating 1734 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 58% | newest rung (gen 1900, rating 1755): scored 53%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1909: champion rating 1774 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 63% | newest rung (gen 1900, rating 1755): scored 42%, rating predicts 53%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1910: champion rating 1791 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 42%, rating predicts 66% | newest rung (gen 1900, rating 1755): scored 56%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 40%
+Generation 1911: champion rating 1806 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 44%, rating predicts 68% | newest rung (gen 1910, rating 1791): scored 66%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 41%
+Generation 1912: champion rating 1754 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 16%, rating predicts 61% | newest rung (gen 1910, rating 1791): scored 21%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1913: champion rating 1771 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 63%, rating predicts 63% | newest rung (gen 1890, rating 1799): scored 47%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1914: champion rating 1779 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 67%, rating predicts 64% | newest rung (gen 1910, rating 1791): scored 47%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 47%
+Generation 1915: champion rating 1775 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 63% | newest rung (gen 1910, rating 1791): scored 43%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1916: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 58%, rating predicts 62% | newest rung (gen 1910, rating 1791): scored 33%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1917: champion rating 1745 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 83%, rating predicts 59% | newest rung (gen 1910, rating 1791): scored 40%, rating predicts 44%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1918: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 67%, rating predicts 62% | newest rung (gen 1910, rating 1791): scored 40%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1919: champion rating 1753 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 71%, rating predicts 61% | newest rung (gen 1910, rating 1791): scored 40%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1920: champion rating 1754 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 67%, rating predicts 61% | newest rung (gen 1910, rating 1791): scored 50%, rating predicts 45%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1921: champion rating 1749 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 60% | newest rung (gen 1920, rating 1754): scored 29%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1922: champion rating 1761 against 31 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 72%, rating predicts 62% | newest rung (gen 1920, rating 1754): scored 71%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 31%
+Generation 1923: champion rating 1749 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 52%, rating predicts 60% | newest rung (gen 1920, rating 1754): scored 38%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1924: champion rating 1781 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 60%, rating predicts 64% | newest rung (gen 1920, rating 1754): scored 80%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1925: champion rating 1756 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 64%, rating predicts 61% | newest rung (gen 1920, rating 1754): scored 51%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1926: champion rating 1741 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 89%, rating predicts 59% | newest rung (gen 1920, rating 1754): scored 62%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 30%
+Generation 1927: champion rating 1745 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 62%, rating predicts 59% | newest rung (gen 1920, rating 1754): scored 77%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1928: champion rating 1751 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 69%, rating predicts 60% | newest rung (gen 1920, rating 1754): scored 60%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1929: champion rating 1758 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 58%, rating predicts 61% | newest rung (gen 1920, rating 1754): scored 49%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1930: champion rating 1753 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 77%, rating predicts 60% | newest rung (gen 1920, rating 1754): scored 45%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1931: champion rating 1759 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 31%, rating predicts 61% | newest rung (gen 1930, rating 1753): scored 39%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 34%
+Generation 1932: champion rating 1764 against 32 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 39%, rating predicts 62% | newest rung (gen 1930, rating 1753): scored 42%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 39%
+Generation 1933: champion rating 1734 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 45%, rating predicts 58% | newest rung (gen 1930, rating 1753): scored 55%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1934: champion rating 1739 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 55%, rating predicts 58% | newest rung (gen 1920, rating 1754): scored 53%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 32%
+Generation 1935: champion rating 1743 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 53%, rating predicts 59% | newest rung (gen 1930, rating 1753): scored 40%, rating predicts 49%
+  Benchmark: PufferLib bot (rating 1872): scored 28%
+Generation 1936: champion rating 1740 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 59% | newest rung (gen 1920, rating 1754): scored 33%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 29%
+Generation 1937: champion rating 1779 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 80%, rating predicts 64% | newest rung (gen 1930, rating 1753): scored 36%, rating predicts 54%
+  Benchmark: PufferLib bot (rating 1872): scored 43%
+Generation 1938: champion rating 1761 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 75%, rating predicts 62% | newest rung (gen 1930, rating 1753): scored 38%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1939: champion rating 1757 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 61% | newest rung (gen 1930, rating 1753): scored 66%, rating predicts 51%
+  Benchmark: PufferLib bot (rating 1872): scored 37%
+Generation 1940: champion rating 1785 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 37%, rating predicts 65% | newest rung (gen 1930, rating 1753): scored 23%, rating predicts 55%
+  Benchmark: PufferLib bot (rating 1872): scored 45%
+Generation 1941: champion rating 1723 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 51%, rating predicts 56% | newest rung (gen 1940, rating 1785): scored 40%, rating predicts 41%
+  Benchmark: PufferLib bot (rating 1872): scored 28%
+Generation 1942: champion rating 1769 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 44%, rating predicts 63% | newest rung (gen 1940, rating 1785): scored 25%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 35%
+Generation 1943: champion rating 1783 against 33 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 73%, rating predicts 64% | newest rung (gen 1940, rating 1785): scored 76%, rating predicts 50%
+  Benchmark: PufferLib bot (rating 1872): scored 38%
+Generation 1944: champion rating 1773 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 75%, rating predicts 63% | newest rung (gen 1940, rating 1785): scored 63%, rating predicts 48%
+  Benchmark: PufferLib bot (rating 1872): scored 36%
+Generation 1945: champion rating 1766 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 54%, rating predicts 62% | newest rung (gen 1940, rating 1785): scored 39%, rating predicts 47%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1946: champion rating 1757 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 61%, rating predicts 61% | newest rung (gen 1940, rating 1785): scored 39%, rating predicts 46%
+  Benchmark: PufferLib bot (rating 1872): scored 33%
+Generation 1947: champion rating 1799 against 34 opponents. Saved to /home/user/Deep-Learning-Projects/slime-volley/champions/agent_genetic_gen_1000.pth
+  Ladder: oldest rung (gen 1660, rating 1679): scored 70%, rating predicts 67% | newest rung (gen 1940, rating 1785): scored 52%, rating predicts 52%
+  Benchmark: PufferLib bot (rating 1872): scored 46%
